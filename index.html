@@ -34,9 +34,12 @@ button{background:#fff;color:#222;font-weight:700}button.on{background:#ffd23f}
 <div><button data-t="0" class="on">✏️描く</button><button data-t="1">💧スポイト</button><button data-t="2">👁視点</button>
 <input id="col" type="color" value="#c8a070"><input id="sz" type="range" min="2" max="24" value="8"><button id="clr">全消し</button></div>
 <div id="pz"></div></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
-<script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js';
 const $=i=>document.getElementById(i);
 const sc=new THREE.Scene();sc.background=new THREE.Color(0xbfd8ee);
 const cam=new THREE.PerspectiveCamera(70,1,.1,300);cam.rotation.order='YXZ';sc.add(cam);
@@ -87,28 +90,128 @@ function fur(x,z,t){const c=col(),w=.8+rnd()*1.4,d=.6+rnd()*.9,b=(X,Y,Z,W,H,D,M)
  for(let i=0,n=0;n<210&&i<900;i++){const x=rnd()*76-38,z=rnd()*76-38;if(free(x,z,1.6)){fur(x,z,rnd()*15|0);n++}}
  const sf=new THREE.Mesh(new THREE.CircleGeometry(7,32),lam(0xdddddd));sf.rotation.x=-Math.PI/2;sf.position.y=200;sc.add(sf);
  const sw=new THREE.Mesh(new THREE.CylinderGeometry(7,7,8,32,1,true),papM([6,2]));sw.material.side=THREE.BackSide;sw.position.y=204;sc.add(sw)})();
+// ---------- テーマ：小さな日本の街 ----------
+(function cityDetails(){
+ const road=lam(0x45484b),concrete=lam(0xb8b2a5),white=lam(0xf1eee4),yellow=lam(0xe9c84a),red=lam(0xd94336),green=lam(0x3d995c),dark=lam(0x252a2d);
+ // 道路のセンターラインと横断歩道
+ for(let z=-36;z<=36;z+=4)box(0,.012,z,.16,.025,1.8,yellow,0);
+ for(const z of [-18,18])for(let i=-4;i<=4;i++)box(i*.65,.02,z,.34,.035,3.2,white,0);
+ // マンホール
+ for(const [x,z] of [[-7,-7],[8,9],[24,-24],[-24,25]]){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(.8,.8,.07,32),dark);m.position.set(x,.045,z);sc.add(m);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.67,.045,8,32),concrete);ring.rotation.x=Math.PI/2;ring.position.set(x,.09,z);sc.add(ring);
+  for(let a=0;a<8;a++){const q=new THREE.Mesh(new THREE.BoxGeometry(.07,.012,.85),concrete);q.position.set(x,.09,z);q.rotation.y=a*Math.PI/4;sc.add(q)}
+ }
+ // 信号機と街灯
+ for(const [x,z] of [[-12,-12],[12,12],[28,-12],[-28,12]]){
+  const pole=box(x,0,z,.16,5,.16,dark,0);
+  box(x,4.4,z,.55,1.35,.42,dark,0);
+  for(let j=0;j<3;j++){const c=[red,yellow,green][j],o=new THREE.Mesh(new THREE.SphereGeometry(.14,12,10),c);o.position.set(x,4.8-j*.38,z+.23);sc.add(o)}
+  box(x+1.1,0,z,.1,4,.1,dark,0);
+  const lamp=new THREE.Mesh(new THREE.SphereGeometry(.22,12,8),lam(0xffe7a3));lamp.position.set(x+1.1,4,z);sc.add(lamp)
+ }
+ // 車（街の生活感）
+ function car(x,z,color){
+  const m=lam(color);box(x,0,z,3.2,.65,1.55,m,0);box(x,.65,z-.08,1.7,.7,1.25,lam(0x8bb4c5),0);
+  for(const dx of [-1,1])for(const dz of [-.65,.65]){const w=new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,.18,16),dark);w.rotation.z=Math.PI/2;w.position.set(x+dx, .3,z+dz);sc.add(w)}
+  box(x,.18,z-0.79,.45,.18,.04,lam(0xfff0b0),0);box(x,.18,z+.79,.45,.18,.04,red,0)
+ }
+ car(-20,-25,0x497da5);car(20,25,0xc45a45);car(31,2,0xd5b34c);
+ // 家の外観、窓、玄関、看板、張り紙
+ for(const [x,z,c] of [[-34,-27,0xd9c5a5],[34,-28,0xd5d8cf],[-34,28,0xc9d6df],[34,28,0xe4c5b4]]){
+  box(x,0,z,7,4.8,5,lam(c),0);
+  box(x,4.8,z,7.8,.35,5.8,lam(0x51483f),0);
+  for(const dx of [-2,2]){box(x+dx,1.8,z-2.56,1.35,1.35, .08,lam(0x6d9bb0),0);box(x+dx,1.8,z-2.62,.08,1.5,.08,white,0);box(x+dx,1.8,z-2.62,1.5,.08,.08,white,0)}
+  box(x,1,z-2.62,1.1,2,.12,lam(0x79583e),0);
+  box(x,3.6,z-2.65,2.2,.7,.12,lam(0xf2e6c9),0);
+  const sign=new THREE.Mesh(new THREE.PlaneGeometry(1.8,.48),new THREE.MeshBasicMaterial({map:T(g=>{g.fillStyle='#f7edcf';g.fillRect(0,0,128,128);g.fillStyle='#343434';g.font='bold 27px sans-serif';g.fillText('町内会',12,48);g.fillText('掲示板',12,90)})}));sign.position.set(x,3.55,z-2.73);sc.add(sign)
+ }
+ // 自動販売機と郵便ポスト
+ box(-26,0,0,1.2,2.1,.75,lam(0xd9e0e2),0);box(-26,1.25,-.39,1,.7,.04,lam(0x355b83),0);
+ for(let i=0;i<4;i++)box(-26.35+i*.23,.45,-.4,.16,.28,.035,lam([0xe85d4a,0xe8cf55,0x5b9ec5,0x69a36b][i]),0);
+ box(26,0,0,.65,1.2,.55,red,0);box(26,.92,-.3,.35,.08,.03,white,0);
+})();
 const spot=()=>{for(;;){const x=Math.random()*76-38,z=Math.random()*76-38;if(free(x,z,.7))return[x,z]}};
 // ---------- 当たり判定・移動 ----------
-const hit=(x,y,z)=>B.find(b=>x+.3>b.a&&x-.3<b.b&&z+.3>b.e&&z-.3<b.f&&y+1.7>b.c&&y<b.d);
+const BODY_R=.34,BODY_H=1.72;
+const overlaps=(x,y,z,b)=>x+BODY_R>b.a&&x-BODY_R<b.b&&z+BODY_R>b.e&&z-BODY_R<b.f&&y+BODY_H>b.c&&y<b.d;
+const hit=(x,y,z)=>B.find(b=>overlaps(x,y,z,b));
 const me={x:0,y:0,z:0,vy:0,yaw:0,pit:0,on:0,fy:0};
-const nearW=()=>B.some(b=>me.x>b.a-.8&&me.x<b.b+.8&&me.z>b.e-.8&&me.z<b.f+.8&&me.y+1.7>b.c-.1&&me.y<b.d+.15);
-function mv(dx,dz,dt,up,dn){me.x+=dx;if(hit(me.x,me.y,me.z))me.x-=dx;me.z+=dz;if(hit(me.x,me.y,me.z))me.z-=dz;
- if(up)me.vy=4;else if(dn)me.vy=-4;else me.vy-=22*dt;me.on=0;me.y+=me.vy*dt;
+const nearW=()=>B.some(b=>me.x>b.a-.95&&me.x<b.b+.95&&me.z>b.e-.95&&me.z<b.f+.95&&me.y+BODY_H>b.c-.15&&me.y<b.d+.2);
+function moveAxis(axis,amount){
+ const steps=Math.max(1,Math.ceil(Math.abs(amount)/.08)),v=amount/steps;
+ for(let i=0;i<steps;i++){me[axis]+=v;if(hit(me.x,me.y,me.z)){me[axis]-=v;return false}}
+ return true;
+}
+function mv(dx,dz,dt,up,dn){
+ moveAxis('x',dx);moveAxis('z',dz);
+ const wall=nearW(),climbing=(up||dn)&&wall;
+ if(up&&wall){me.vy=3.2;me.y+=me.vy*dt;me.on=0}
+ else if(dn&&wall){me.vy=-3.2;me.y=Math.max(0,me.y+me.vy*dt)}
+ else {me.vy-=22*dt;me.y+=me.vy*dt}
  if(me.y<0){me.y=0;me.vy=0;me.on=1}
- const b=hit(me.x,me.y,me.z);if(b){if(me.vy<=0){me.y=b.d;me.vy=0;me.on=1}else{me.y=b.c-1.701;me.vy=0}}
- me.x=Math.max(-40.4,Math.min(40.4,me.x));me.z=Math.max(-40.4,Math.min(40.4,me.z))}
+ const b=climbing?null:hit(me.x,me.y,me.z);
+ if(b){if(me.vy<=0){me.y=b.d;me.vy=0;me.on=1}else{me.y=b.c-BODY_H;me.vy=0}}
+ me.x=Math.max(-40.4,Math.min(40.4,me.x));me.z=Math.max(-40.4,Math.min(40.4,me.z));
+}
 // ---------- 棒人間 ----------
-const PO=[['立つ',[0,-.12,0,.12,0,-.04,0,.04,0]],['T字',[0,-1.57,0,1.57,0,-.04,0,.04,0]],['万歳',[0,-2.9,0,2.9,0,-.1,0,.1,0]],['すわる',[-.3,-.2,-.3,.2,-1.57,0,-1.57,0,-.62]],['しゃがむ',[-.8,-.2,-.8,.2,-1.1,-.1,-1.1,.1,-.42]],['片手',[0,-.12,0,2.8,0,-.04,0,.04,0]],['走る',[-.9,-.1,.9,.1,.8,0,-.8,0,0]],['大の字',[0,-2.2,0,2.2,0,-.5,0,.5,0]]];
-function setPose(f,p){f.piv[0].rotation.set(p[0],0,p[1]);f.piv[1].rotation.set(p[2],0,p[3]);f.piv[2].rotation.set(p[4],0,p[5]);f.piv[3].rotation.set(p[6],0,p[7]);f.body.position.y=p[8];f.pose=p}
-function mkFig(id){const root=new THREE.Group(),body=new THREE.Group();root.add(body);const f={root,body,cv:[],m:[],piv:[]};
- const mk=geo=>{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,128,128);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const b=new THREE.MeshBasicMaterial({map:t}),l=new THREE.MeshLambertMaterial({map:t}),m=new THREE.Mesh(geo,b);m.userData={pid:id,cx:x,t,b,l};f.m.push(m);f.cv.push(c);return m};
- const h=mk(new THREE.SphereGeometry(.17,16,12));h.position.y=1.62;body.add(h);
- const t=mk(new THREE.CylinderGeometry(.1,.1,.62,12));t.position.y=1.1;body.add(t);
- [[-.15,1.4,.07,.55],[.15,1.4,.07,.55],[-.07,.8,.08,.8],[.07,.8,.08,.8]].forEach(([x,y,r,l])=>{const p=new THREE.Group();p.position.set(x,y,0);const m=mk(new THREE.CylinderGeometry(r,r,l,10));m.position.y=-l/2;p.add(m);body.add(p);f.piv.push(p)});
- setPose(f,PO[0][1]);return f}
-const matMode=(f,l)=>f.m.forEach(m=>m.material=l?m.userData.l:m.userData.b);
-const wipe=f=>f.m.forEach(m=>{const u=m.userData;u.cx.fillStyle='#fff';u.cx.fillRect(0,0,128,128);u.t.needsUpdate=true});
-const loadTex=(f,a)=>a.forEach((u,i)=>{const im=new Image();im.onload=()=>{const d=f.m[i].userData;d.cx.drawImage(im,0,0);d.t.needsUpdate=true};im.src=u});
+let avatarTemplate=null,avatarReady=false;
+const AVATAR_URL='./smooth_white_rigged_figure_with_bones.glb';
+new GLTFLoader().load(AVATAR_URL,g=>{
+ avatarTemplate=g.scene;
+ avatarTemplate.updateMatrixWorld(true);
+ const box3=new THREE.Box3().setFromObject(avatarTemplate),size=box3.getSize(new THREE.Vector3());
+ const scale=1.72/Math.max(size.y,.001);
+ avatarTemplate.scale.setScalar(scale);
+ const center=box3.getCenter(new THREE.Vector3());
+ avatarTemplate.position.set(-center.x*scale,-box3.min.y*scale,-center.z*scale);
+ avatarReady=true;
+ for(const id in RM)if(!RM[id].f.ready)buildAvatar(RM[id].f,id);
+},undefined,e=>console.error('アバターモデルを読み込めません:',e));
+function buildAvatar(f,id){
+ if(!avatarReady)return;
+ const clone=SkeletonUtils.clone(avatarTemplate);
+ clone.traverse(o=>{if(o.isMesh){o.userData.pid=id;o.userData.avatarMesh=1;o.material=new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});f.m.push(o)}});
+ f.root.add(clone);f.model=clone;f.ready=true;f.bones={};
+ clone.traverse(o=>{if(o.isBone)f.bones[o.name]=o});
+ f.cv=[document.createElement('canvas')];f.cv[0].width=f.cv[0].height=1024;
+ const c=f.cv[0],ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,1024,1024);
+ f.texture=new THREE.CanvasTexture(c);f.texture.colorSpace=THREE.SRGBColorSpace;
+ f.m.forEach(m=>{m.material.map=f.texture;m.material.needsUpdate=true;m.userData.cx=ctx;m.userData.t=f.texture});
+ setPose(f,PO[0][1]);
+}
+function mkFig(id){const root=new THREE.Group();const f={root,body:root,cv:[],m:[],piv:[],ready:false,bones:{},pose:PO[0][1]};buildAvatar(f,id);return f}
+const PO=[
+ ['立つ',[0,0,0,0,0,0,0,0,0]],
+ ['T字',[0,0,0,0,0,0,0,0,0]],
+ ['万歳',[0,0,0,0,0,0,0,0,0]],
+ ['すわる',[0,0,0,0,0,0,0,0,0]],
+ ['しゃがむ',[0,0,0,0,0,0,0,0,0]],
+ ['片手',[0,0,0,0,0,0,0,0,0]],
+ ['走る',[0,0,0,0,0,0,0,0,0]],
+ ['大の字',[0,0,0,0,0,0,0,0,0]]
+];
+function setPose(f,p){
+ if(!f.ready)return;
+ const b=f.bones;
+ const rot=(name,x,y,z)=>{if(b[name])b[name].rotation.set(x,y,z)};
+ const idx=PO.findIndex(q=>JSON.stringify(q[1])===JSON.stringify(p)),pose=idx<0?0:idx; 
+ const neutral=()=>{Object.values(b).forEach(o=>o.rotation.set(0,0,0))};
+ neutral();
+ const arm=(side,shoulder,elbow=0)=>{rot(side+'_Upperarm',0,0,shoulder);rot(side+'_Forearm',0,0,elbow)};
+ const leg=(side,hip,knee=0)=>{rot(side+'_Thigh',knee,0,hip);rot(side+'_Calf',-knee,0,0)};
+ if(pose===1){arm('L',-1.45);arm('R',1.45)}
+ if(pose===2){arm('L',-2.65);arm('R',2.65)}
+ if(pose===3){leg('L',-.25,.9);leg('R',.25,.9);rot('Spine01',-.25,0,0)}
+ if(pose===4){leg('L',-.65,1.2);leg('R',.65,1.2);rot('Spine01',.25,0,0)}
+ if(pose===5)arm('R',2.7,-.3);
+ if(pose===6){leg('L',-.55,.8);leg('R',.55,.1);arm('L',-.6);arm('R',.6)}
+ if(pose===7){arm('L',-2.1);arm('R',2.1);leg('L',-.5);leg('R',.5)}
+ f.pose=p;
+}
+const matMode=(f,l)=>f.m.forEach(m=>{m.material.color.set(l?0xff7777:0xffffff)});
+const wipe=f=>{if(!f.ready)return;const u=f.m[0].userData;u.cx.fillStyle='#fff';u.cx.fillRect(0,0,1024,1024);u.t.needsUpdate=true};
+const loadTex=(f,a)=>{if(!f.ready||!a||!a[0])return;const im=new Image();im.onload=()=>{const u=f.m[0].userData;u.cx.clearRect(0,0,1024,1024);u.cx.drawImage(im,0,0,1024,1024);u.t.needsUpdate=true};im.src=a[0]};
 // ---------- 状態 ----------
 let ph='menu',tm=0,P={},RM={},surv=[],myId,isHost,hostConn,peer,locked=0,tool=0,az=0,finSent=0,cd=0,jx=0,jy=0,HL=[],up=0,dn=0;
 const K={};const role=()=>(P[myId]&&P[myId].role)||'free';
@@ -164,20 +267,20 @@ function onMsg(m){
  else if(m.k=='S'){for(const i in m.s)if(i!=myId)getRM(i).s=m.s[i]}
  else if(m.k=='fin'){if(m.id!=myId)loadTex(getRM(m.id).f,m.tex)}
  else if(m.k=='found'){P=m.P;const r=getRM(m.id);if(m.id==myId){locked=0;show('見つかった！\nあなたも鬼になった👹')}else show((P[m.id]?P[m.id].n:'')+' が見つかった！');setPose(r.f,PO[0][1]);mats();ui()}}
-function doLock(){locked=1;me.fy=me.yaw}
-function sendFin(){finSent=1;if(role()=='hider')locked=1;tell({k:'fin',tex:getRM(myId).f.cv.map(c=>c.toDataURL())});ui()}
+function doLock(){locked=1;me.vy=0;me.fy=me.yaw}
+function sendFin(){finSent=1;if(role()=='hider')locked=1;tell({k:'fin',tex:[getRM(myId).f.cv[0].toDataURL()]});ui()}
 setInterval(()=>{if(ph!='menu'&&myId){const r=getRM(myId);tell({k:'st',s:[...(studio()?[0,200,0,0]:[me.x,me.y,me.z,me.fy]),me.pit,r.f.pose]})}},100);
 // ---------- 操作 ----------
 const cv=$('c'),rc=new THREE.Raycaster(),v2=new THREE.Vector2();let lp={};
 function view(dx,dy){if(studio()){az-=dx*.01;me.pit=Math.max(-.5,Math.min(1,me.pit-dy*.005))}else{me.yaw-=dx*.005;me.pit=Math.max(-1.4,Math.min(1.4,me.pit-dy*.005))}}
-function paint(e,p){const f=RM[myId].f;v2.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);rc.setFromCamera(v2,cam);const h=rc.intersectObjects(f.m,false)[0];if(!h||!h.uv){p.u=null;return 0}
- const m=h.object,u=m.userData,x=h.uv.x*128,y=(1-h.uv.y)*128,g=u.cx;g.strokeStyle=$('col').value;g.lineWidth=$('sz').value*1.5;g.lineCap='round';g.beginPath();
- if(p.u&&p.u.m==m&&Math.abs(p.u.x-x)<40){g.moveTo(p.u.x,p.u.y);g.lineTo(x,y)}else{g.moveTo(x,y);g.lineTo(x+.01,y)}g.stroke();u.t.needsUpdate=true;p.u={m,x,y};return 1}
+function paint(e,p){const f=RM[myId].f;if(!f.ready)return 0;v2.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);rc.setFromCamera(v2,cam);const h=rc.intersectObjects(f.m,false)[0];if(!h||!h.uv){p.u=null;return 0}
+ const m=h.object,u=m.userData,x=h.uv.x*1024,y=(1-h.uv.y)*1024,g=u.cx;g.strokeStyle=$('col').value;g.lineWidth=$('sz').value*5;g.lineCap='round';g.beginPath();
+ if(p.u&&p.u.m==m&&Math.abs(p.u.x-x)<320){g.moveTo(p.u.x,p.u.y);g.lineTo(x,y)}else{g.moveTo(x,y);g.lineTo(x+.01,y)}g.stroke();u.t.needsUpdate=true;p.u={m,x,y};return 1}
 function pick(e){const f=RM[myId].f;f.root.visible=false;rd.render(sc,cam);const gl=rd.getContext(),b=new Uint8Array(4),x=Math.floor(e.clientX/innerWidth*gl.drawingBufferWidth),y=gl.drawingBufferHeight-1-Math.floor(e.clientY/innerHeight*gl.drawingBufferHeight);
  gl.readPixels(x,y,1,1,gl.RGBA,gl.UNSIGNED_BYTE,b);f.root.visible=true;$('col').value='#'+[b[0],b[1],b[2]].map(v=>v.toString(16).padStart(2,'0')).join('')}
-cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);const p=lp[e.pointerId]={x:e.clientX,y:e.clientY,u:null,v:0};if(paintUI()){if(tool==1)pick(e);else if(tool==0)p.v=!paint(e,p)}};
+cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);const p=lp[e.pointerId]={x:e.clientX,y:e.clientY,u:null,v:0};if(paintUI()){if(!RM[myId].f.ready){show('モデルを読み込み中です');return}if(tool==1)pick(e);else if(tool==0)p.v=!paint(e,p)}};
 cv.onpointermove=e=>{const p=lp[e.pointerId];if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
- if(paintUI()){if(tool==0){if(p.v)view(dx,dy);else paint(e,p)}else if(tool==1)pick(e);else view(dx,dy)}else if(ph!='menu')view(dx,dy)};
+ if(paintUI()){if(!RM[myId].f.ready)return;if(tool==0){if(p.v)view(dx,dy);else paint(e,p)}else if(tool==1)pick(e);else view(dx,dy)}else if(ph!='menu')view(dx,dy)};
 cv.onpointerup=cv.onpointercancel=e=>{delete lp[e.pointerId]};
 const J=$('joy');let jp=null;
 function jm(e){const r=J.getBoundingClientRect();let x=(e.clientX-r.left-r.width/2)/(r.width/2),y=(e.clientY-r.top-r.height/2)/(r.height/2);const l=Math.hypot(x,y);if(l>1){x/=l;y/=l}jx=x;jy=y;$('knob').style.transform=`translate(${x*35}px,${y*35}px)`}
@@ -202,7 +305,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
  const w=walk(),nr=w&&nearW();$('bu').hidden=$('bd').hidden=!nr;if(!nr)up=dn=0;
  if(ph!='menu'&&!studio()){let mx=0,mz=0;
   if(w){const ix=jx+(K.KeyD?1:0)-(K.KeyA?1:0),fw=-jy+(K.KeyW?1:0)-(K.KeyS?1:0),s=Math.sin(me.yaw),c=Math.cos(me.yaw),l=Math.max(1,Math.hypot(ix,fw)),sp=(role()=='oni'?5.5:4.5)*dt/l;mx=(c*ix-s*fw)*sp;mz=(-s*ix-c*fw)*sp;if(jump&&me.on){me.vy=7;me.on=0}}
-  jump=0;mv(mx,mz,dt,up&&nr,dn&&nr);if(tps()){if(locked)me.fy=me.yaw;else if(mx||mz)me.fy=Math.atan2(mx,mz)}else me.fy=me.yaw+Math.PI}
+  jump=0;if(!(ph=='paint'&&role()=='hider'&&locked))mv(mx,mz,dt,up&&nr,dn&&nr);if(tps()){if(locked)me.fy=me.yaw;else if(mx||mz)me.fy=Math.atan2(mx,mz)}else me.fy=me.yaw+Math.PI}
  for(const id in RM){const r=RM[id],f=r.f;let p,v=0;
   if(id==myId){if(studio()){p=[0,200,0,0];v=1}else if(tps()){p=[me.x,me.y,me.z,me.fy];v=1}}
   else if(r.s&&!studio()&&!(r.s[1]>100)){p=r.s;v=1;if(r.s[5])setPose(f,r.s[5])}
