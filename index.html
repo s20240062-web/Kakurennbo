@@ -595,6 +595,7 @@ let ph='menu',zm=1,PX=0,PY=0,tm=0,P={},RM={},surv=[],myId,isHost,hostConn,peer,l
 const K={};const role=()=>(P[myId]&&P[myId].role)||'free';
 const getRM=id=>RM[id]||(RM[id]={f:(f=>{sc.add(f.root);return f})(mkFig(id)),s:null});
 const walk=()=>ph!='menu'&&(role()=='free'||ph=='lobby'||ph=='reveal'||(ph=='paint'&&role()=='hider'&&!locked)||(ph=='seek'&&(role()=='oni'||role()=='hider')));
+const drOK=()=>role()=='hider'&&((ph=='paint'&&locked)||ph=='seek');
 const paintUI=()=>!dr&&((ph=='paint'&&role()!='free')||(ph=='seek'&&role()=='hider'));const tps=()=>role()=='hider'&&(ph=='paint'||ph=='seek'),studio=()=>ph=='paint'&&role()=='oni';
 let toastT;function show(t,ms=2500){$('msg').textContent=t;clearTimeout(toastT);toastT=setTimeout(()=>$('msg').textContent='',ms)}
 const chatT={};
@@ -603,7 +604,7 @@ function sendChat(){const i=$('ci'),t=i.value.trim();if(!t)return;i.value='';tel
 $('cs').onclick=sendChat;$('ci').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();sendChat()}};
 const PN={lobby:'待機中',paint:'ペイント',seek:'探索',reveal:'答え合わせ'};
 function ui(){const w=walk(),pu=paintUI();tnP.style.display=(ph=='seek'&&role()=='hider')?'flex':'none';$('joy').hidden=!(w||dr);$('pnt').hidden=!pu;$('act').hidden=!(w||pu||dr);$('bj').hidden=!w;$('bs').hidden=!(ph=='seek'&&role()=='oni');
- $('bl').hidden=!(ph=='paint'&&role()=='hider');$('bl').textContent=locked?'解除して動く':'ここに固定';$('bdr').hidden=!(ph=='paint'&&role()=='hider'&&locked);$('bdr').textContent=dr?'🏠 戻る':'🛸 ドローン';$('chat').hidden=ph=='menu';$('pz').hidden=role()=='oni';$('menu').hidden=ph!='menu';
+ $('bl').hidden=!(ph=='paint'&&role()=='hider');$('bl').textContent=locked?'解除して動く':'ここに固定';$('bdr').hidden=!drOK();$('bdr').textContent=dr?'🏠 戻る':'🛸 ドローン';$('chat').hidden=ph=='menu';$('pz').hidden=role()=='oni';$('menu').hidden=ph!='menu';
  $('ch').hidden=!(w||(ph=='seek'&&role()=='oni'));$('lobby').hidden=ph!='lobby';{const o=pu?($('pnt').offsetHeight+16)+'px':'';$('joy').style.bottom=o;$('act').style.bottom=o}
  if(ph=='lobby'){$('pl').innerHTML='<b>参加者</b><br>'+Object.values(P).map(p=>p.n).join('<br>');$('st').hidden=!isHost;$('lw').textContent=isHost?(Object.keys(P).length<2?'2人以上で開始できます':''):'ホストの開始を待っています…'}hud()}
 const SK=c=>`<svg width="12" height="22" viewBox="0 0 12 22" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="4" r="2.6"/><path d="M6 7v8M2 10l4-1.5 4 1.5M6 15l-3.5 6M6 15l3.5 6"/></svg>`;
@@ -637,10 +638,10 @@ function join(){const name=$('nm').value.trim()||('ゲスト'+(Math.random()*99|
  pe.on('open',id=>{isHost=true;myId=id;pe.on('connection',c=>{conns[c.peer]=c;c.on('data',d=>onH(c.peer,d));c.on('close',()=>{delete conns[c.peer];delete P[c.peer];delete SS[c.peer];delete FIN[c.peer];pbc()})});
   P[myId]={n:name,role:'free'};hostLoop();pbc()});
  pe.on('error',e=>{if(e.type=='unavailable-id'&&!myId){const p2=new Peer();p2.on('open',id=>{myId=id;hostConn=p2.connect(pid,{reliable:true});hostConn.on('open',()=>hostConn.send({k:'join',n:name}));hostConn.on('data',onMsg);hostConn.on('close',()=>{alert('ホストとの接続が切れました');location.reload()})});p2.on('error',e=>alert('接続エラー:'+e.type))}else if(e.type!='unavailable-id')alert('接続エラー:'+e.type)})}
-function tp(s){me.x=s[0];me.z=s[1];me.y=0;me.vy=0;me.yaw=Math.random()*6.28;me.pit=0}
+function tp(s){me.x=s[0];me.z=s[1];me.y=0;me.vy=0;me.yaw=Math.random()*6.28;me.pit=0;me.fy=me.yaw+Math.PI}
 function clearHL(){HL.forEach(o=>sc.remove(o));HL=[]}
 function mats(){for(const i in RM)matMode(RM[i].f,P[i]&&P[i].role=='oni')}
-function enter(p){ph=p;dr=null;finSent=0;clearHL();if(p=='paint'){myPts=0;tnSet(0);SCS={}}if(p=='reveal'&&role()=='hider')tell({k:'pts',p:+myPts.toFixed(2)});
+function enter(p){ph=p;if(!(p=='seek'&&dr))dr=null;finSent=0;clearHL();if(p=='paint'){myPts=0;tnSet(0);SCS={}}if(p=='reveal'&&role()=='hider')tell({k:'pts',p:+myPts.toFixed(2)});
  if(p=='lobby'||p=='paint'){for(const i in RM){wipe(RM[i].f);setPose(RM[i].f,0)}locked=0;tool=0;az=0;zm=1;PX=PY=0;setTool(0)}
  if(p=='lobby')tp(spot());
  if(p=='paint'){if(role()=='oni'){me.pit=.2;show('【'+MAPS[MI].name+'】あなたは鬼！\n待ち時間にアバターを描こう',4000)}else{tp(spot());show('【'+MAPS[MI].name+'】隠れる場所へ移動しながら描ける！\n決まったら「ここに固定」。壁際の▲▼で登れます',4500)}}
@@ -704,7 +705,7 @@ function jm(e){const r=J.getBoundingClientRect();let x=(e.clientX-r.left-r.width
 J.onpointerdown=e=>{jp=e.pointerId;J.setPointerCapture(jp);jm(e)};J.onpointermove=e=>{if(e.pointerId==jp)jm(e)};J.onpointerup=J.onpointercancel=()=>{jp=null;jx=jy=0;$('knob').style.transform=''};
 let jump=0;$('bj').onpointerdown=()=>jump=1;$('bu').onpointerdown=()=>up=1;$('bd').onpointerdown=()=>dn=1;for(const k of['bu','bd'])$(k).onpointerup=$(k).onpointercancel=$(k).onpointerleave=()=>{up=dn=0};
 $('bl').onclick=()=>{if(locked){locked=0;dr=null}else doLock();ui()};
-$('bdr').onclick=()=>{if(dr)dr=null;else if(ph=='paint'&&role()=='hider'&&locked){dr={x:cam.position.x,y:cam.position.y,z:cam.position.z,yaw:cam.rotation.y,pit:cam.rotation.x};show('🛸ドローン視点：ボタンで元の場所に戻れます',2200)}ui()};
+$('bdr').onclick=()=>{if(dr)dr=null;else if(drOK()){dr={x:cam.position.x,y:cam.position.y,z:cam.position.z,yaw:cam.rotation.y,pit:cam.rotation.x};show('🛸ドローン視点：ボタンで元の場所に戻れます',2200)}ui()};
 $('bs').onpointerdown=shoot;
 function shoot(){if(cd>0||ph!='seek'||role()!='oni')return;cd=.9;$('fl').style.opacity=.7;setTimeout(()=>$('fl').style.opacity=0,90);
  const tg=[];for(const i in RM)if(i!=myId&&P[i]&&P[i].role=='hider'&&RM[i].f.root.visible)tg.push(RM[i].f.mesh);const all=wm.concat(tg),hs=new Set();rc.far=40;
@@ -767,10 +768,10 @@ const gun=new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.8),lam(0x222222));gun.posi
 const BX={};let last=performance.now();
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;cd-=dt;FR++;HS=role()=='hider'&&(ph=='paint'||ph=='seek'||ph=='reveal')?.5:1;
  const w=walk(),nr=w&&nearW();$('bu').hidden=$('bd').hidden=!(nr||dr);if(!(nr||dr))up=dn=0;
- if(dr&&!(ph=='paint'&&role()=='hider'&&locked)){dr=null;ui()}
+ if(dr&&!drOK()){dr=null;ui()}
  if(ph!='menu'&&!studio()&&!(tps()&&locked)){let mx=0,mz=0;
-  if(w){const ix=jx+(K.KeyD?1:0)-(K.KeyA?1:0),fw=-jy+(K.KeyW?1:0)-(K.KeyS?1:0),s=Math.sin(me.yaw),c=Math.cos(me.yaw),l=Math.max(1,Math.hypot(ix,fw)),sp=(role()=='oni'?5.5:4.5)*dt/l;mx=(c*ix-s*fw)*sp;mz=(-s*ix-c*fw)*sp;if(jump&&(me.on||me.cl)){me.vy=7;me.on=0;me.cl=0}}
-  jump=0;mv(mx,mz,dt,up,dn,nr);if(HS==1)eject();me.fy=me.yaw+Math.PI}
+  if(w&&!dr){const ix=jx+(K.KeyD?1:0)-(K.KeyA?1:0),fw=-jy+(K.KeyW?1:0)-(K.KeyS?1:0),s=Math.sin(me.yaw),c=Math.cos(me.yaw),l=Math.max(1,Math.hypot(ix,fw)),sp=(role()=='oni'?5.5:4.5)*dt/l;mx=(c*ix-s*fw)*sp;mz=(-s*ix-c*fw)*sp;if(jump&&(me.on||me.cl)){me.vy=7;me.on=0;me.cl=0}}
+  jump=0;mv(mx,mz,dt,dr?0:up,dr?0:dn,nr);if(HS==1)eject();if(mx||mz||HS==1)me.fy=me.yaw+Math.PI}
   burCheck(dt);if(me.warn){if(FR%40==0)show('これ以上は登れません（範囲外）',900);me.warn=0}
  const ho=role()=='hider'&&(ph=='paint'||ph=='seek');
  for(const id in RM){const r=RM[id],f=r.f;let p,v=0;
