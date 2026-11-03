@@ -24,15 +24,14 @@ button{background:#fff;color:#222;font-weight:700}button.on{background:#ffd23f}
 @media (max-height:420px){#menu .mb{gap:6px 12px}#menu .mb input{padding:7px 14px}#menu #go{padding-top:4px;padding-bottom:4px}#menu .mb p{display:none}}
 #joy{left:calc(64px + env(safe-area-inset-left));bottom:calc(72px + env(safe-area-inset-bottom));width:130px;height:130px;border-radius:50%;background:#fff3;border:2px solid #fff6}
 #knob{position:absolute;left:35px;top:35px;width:60px;height:60px;border-radius:50%;background:#fffa;pointer-events:none}
-#act{right:calc(44px + env(safe-area-inset-right));bottom:calc(72px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end}
-#bu,#bd{background:#7cf}#act button{padding:16px 20px;font-size:18px}#bs{background:#f55;color:#fff}
+#bu,#bd{background:#7cf}#bl,#bdr{white-space:pre}#bs{background:#f55;color:#fff}
 .rb{position:fixed;z-index:6;border-radius:50%;padding:0!important;margin:0;display:flex;align-items:center;justify-content:center;line-height:1.1;text-align:center;box-sizing:border-box;border:3px solid #fff9;box-shadow:0 3px 8px #0006;opacity:.9;white-space:nowrap;touch-action:none;-webkit-tap-highlight-color:transparent}
 .rb:active{transform:scale(.94);opacity:1}
 #gear{top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));z-index:7;width:44px;height:44px;padding:0;margin:0;border-radius:50%;font-size:22px;background:#fffd}
 #ed{inset:0;background:#000c;z-index:20;touch-action:none}
 #edp{position:absolute;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:#000d;border-radius:12px;padding:8px 12px;text-align:center;font-size:13px;max-width:92vw;box-sizing:border-box;z-index:2}
 #edp input[type=range]{width:min(200px,50vw);vertical-align:middle;padding:0}
-.gb{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:3px dashed #ffd23f;touch-action:none;font-weight:700;text-align:center;line-height:1.1;white-space:nowrap;cursor:grab}
+.gb{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:3px dashed #ffd23f;touch-action:none;font-weight:700;text-align:center;line-height:1.1;white-space:pre;cursor:grab}
 .gb.sel{border-style:solid;box-shadow:0 0 0 3px #ffd23f88}
 #edp label{display:inline-block;margin:2px 6px;white-space:nowrap}
 #edp .edh{opacity:.75;font-size:12px}
@@ -51,7 +50,7 @@ button{background:#fff;color:#222;font-weight:700}button.on{background:#ffd23f}
 #msg{top:22%;left:0;right:0;text-align:center;font-size:22px;font-weight:700;text-shadow:0 2px 4px #000;pointer-events:none;white-space:pre-line}
 #chat{top:calc(8px + env(safe-area-inset-top));left:calc(8px + env(safe-area-inset-left));width:230px;background:#0007;border-radius:10px;padding:4px 6px;font-size:12px;color:#fff}#cl{max-height:84px;overflow-y:auto;line-height:1.35;word-break:break-all;text-shadow:0 1px 2px #000;-webkit-overflow-scrolling:touch}#cr{display:flex}#ci{flex:1;min-width:0;padding:4px 6px;margin:3px 2px 1px 0;font-size:16px}#cs{padding:4px 8px;margin:3px 0 1px;font-size:13px}#fl{inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .1s}
 #pnt button{padding:8px 10px}#pz{overflow-x:auto;white-space:nowrap}#pz button{padding:6px 10px;margin:2px}.sw{width:38px;height:38px;border:3px solid #fff;padding:0;margin:3px;vertical-align:middle}#pal{display:inline-block;vertical-align:middle}
-button,input,#pnt,#act{touch-action:manipulation}#joy,#c{touch-action:none!important}#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fff}
+button,input,#pnt{touch-action:manipulation}#joy,#c{touch-action:none!important}#gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fff}
 #gate input{width:min(80vw,300px);box-sizing:border-box;margin:0;padding:10px 12px;border:2px solid #888;border-radius:6px;background:#fff;color:#000;font-size:16px;text-align:center;outline:0}
 </style></head><body>
 <div id="gate"><input id="gp" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
@@ -61,7 +60,7 @@ button,input,#pnt,#act{touch-action:manipulation}#joy,#c{touch-action:none!impor
 <div id="lobby" class="ui" hidden><div id="pl"></div><button id="st">ゲーム開始</button><p id="lw" style="font-size:13px"></p></div>
 <div id="chat" class="ui" hidden><div id="cl"></div><div id="cr"><input id="ci" maxlength="60" placeholder="チャット" autocomplete="off"><button id="cs">送信</button></div></div>
 <div id="joy" class="ui" hidden><i id="knob"></i></div>
-<div id="act" class="ui" hidden><button id="bu">▲</button><button id="bd">▼</button><button id="bl">ここに固定</button><button id="bdr" hidden>🛸 ドローン</button></div>
+<button id="bu" class="rb" hidden>▲</button><button id="bd" class="rb" hidden>▼</button><button id="bl" class="rb" hidden>ここに固定</button><button id="bdr" class="rb" hidden>🛸 ドローン</button>
 <button id="bs" class="rb" hidden>🔫</button><button id="bj" class="rb" hidden>ジャンプ</button>
 <button id="gear" class="ui" aria-label="操作設定">⚙️</button>
 <div id="ed" class="ui" hidden><div id="edp"><b>操作の設定</b> <span class="edh">ドラッグで移動／●で大きさ</span><br><label><b id="edn"></b> の大きさ <input id="eds" type="range" min="48" max="200" step="1"></label><br><label>スティック感度 <input id="sns" type="range" min="0.5" max="2" step="0.05"> <b id="snsv"></b></label> <label>視点感度 <input id="snv" type="range" min="0.3" max="3" step="0.05"> <b id="snvv"></b></label><br><button id="edr">初期設定に戻す</button><button id="edo">完了</button></div></div>
@@ -655,9 +654,9 @@ const LG=new Set();function addLog(a,b){const l=$('cl'),d=document.createElement
 function sendChat(){const i=$('ci'),t=i.value.trim();if(!t)return;i.value='';tell({k:'chat',t:t.slice(0,60)})}
 $('cs').onclick=sendChat;$('ci').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();sendChat()}};
 const PN={lobby:'待機中',paint:'ペイント',seek:'探索',reveal:'答え合わせ'};
-function ui(){const w=walk(),pu=paintUI();tnP.style.display=(ph=='seek'&&role()=='hider')?'flex':'none';$('joy').hidden=!(w||dr);$('pnt').hidden=!pu;$('act').hidden=!(w||pu||dr);$('bj').hidden=!w;$('bs').hidden=!(ph=='seek'&&role()=='oni');
- $('bl').hidden=!(ph=='paint'&&role()=='hider');$('bl').textContent=locked?'解除して動く':'ここに固定';$('bdr').hidden=!drOK();$('bdr').textContent=dr?'🏠 戻る':'🛸 ドローン';$('chat').hidden=ph=='menu';$('pb').hidden=role()=='oni';if(!$('pw').hidden&&!(pu&&role()!='oni'))pwClose();$('menu').hidden=ph!='menu';{const gs=ph=='menu'||ph=='lobby';$('gear').hidden=!gs;if(!gs&&ED)edClose(1)}
- $('ch').hidden=!(w||(ph=='seek'&&role()=='oni'));$('lobby').hidden=ph!='lobby';{const o=pu?($('pnt').offsetHeight+16)+'px':'';layBtn();$('act').style.bottom=o}
+function ui(){const w=walk(),pu=paintUI();tnP.style.display=(ph=='seek'&&role()=='hider')?'flex':'none';$('joy').hidden=!(w||dr);$('pnt').hidden=!pu;$('bj').hidden=!w;$('bs').hidden=!(ph=='seek'&&role()=='oni');
+ $('bl').hidden=!(ph=='paint'&&role()=='hider');$('bl').textContent=locked?'解除して\n動く':'ここに\n固定';$('bdr').hidden=!drOK();$('bdr').textContent=dr?'🏠\n戻る':'🛸\nドローン';$('chat').hidden=ph=='menu';$('pb').hidden=role()=='oni';if(!$('pw').hidden&&!(pu&&role()!='oni'))pwClose();$('menu').hidden=ph!='menu';{const gs=ph=='menu'||ph=='lobby';$('gear').hidden=!gs;if(!gs&&ED)edClose(1)}
+ $('ch').hidden=!(w||(ph=='seek'&&role()=='oni'));$('lobby').hidden=ph!='lobby';layBtn()
  if(ph=='lobby'){$('pl').innerHTML='<b>参加者</b><br>'+Object.values(P).map(p=>p.n).join('<br>');$('st').hidden=!isHost;$('lw').textContent=isHost?(Object.keys(P).length<2?'2人以上で開始できます':''):'ホストの開始を待っています…'}hud()}
 const SK=c=>`<svg width="12" height="22" viewBox="0 0 12 22" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="4" r="2.6"/><path d="M6 7v8M2 10l4-1.5 4 1.5M6 15l-3.5 6M6 15l3.5 6"/></svg>`;
 function hud(){const vs=ph!='lobby'&&ph!='menu',n=r=>Object.values(P).filter(p=>p.role==r).length;$('top').style.cssText+=';display:flex;gap:10px;align-items:center;justify-content:center';
@@ -764,8 +763,9 @@ $('bdr').onclick=()=>{if(dr)dr=null;else if(drOK()){dr={x:cam.position.x,y:cam.p
 $('bs').onpointerdown=shoot;
 
 // ---------- 操作配置・感度設定（移動スティック/撃つ/ジャンプ） ----------
-var BD={joy:{d:130},bs:{d:84,r:140,b:190},bj:{d:76,r:140,b:90}},BC={},ED=null,JD=130,SEN={s:1,v:1};
-const BIDS=['joy','bs','bj'],BMN={joy:80,bs:48,bj:48},BMX={joy:240,bs:200,bj:200},BNM={joy:'🕹 移動スティック',bs:'🔫 撃つ',bj:'ジャンプ'};
+var BD={joy:{d:130},bs:{d:84,r:140,b:190},bj:{d:76,r:140,b:90},bl:{d:84,r:52,b:92},bdr:{d:72,r:52,b:182},bd:{d:64,r:52,b:260},bu:{d:64,r:52,b:332}},BC={},ED=null,JD=130,SEN={s:1,v:1};
+const BIDS=['joy','bs','bj','bl','bdr','bd','bu'],GRP=['bu','bd','bl','bdr'],BMN={joy:80,bs:48,bj:48,bl:56,bdr:52,bd:44,bu:44},BMX={joy:240,bs:200,bj:200,bl:200,bdr:180,bd:160,bu:160},BNM={joy:'🕹 移動スティック',bs:'🔫 撃つ',bj:'ジャンプ',bl:'📌 ここに固定',bdr:'🛸 ドローン',bd:'▼ 下へ',bu:'▲ 上へ'};
+const EDL={joy:'🕹',bs:'🔫',bj:'ジャンプ',bl:'ここに\n固定',bdr:'🛸\nドローン',bd:'▼',bu:'▲'},EDB={joy:'#ffffff55',bs:'#f55',bj:'#fff',bl:'#fff',bdr:'#fff',bd:'#7cf',bu:'#7cf'},EDF={joy:'#fff',bs:'#fff'};
 try{BC=JSON.parse(localStorage.mkBtn||'{}')||{}}catch(e){BC={}}
 try{const t=JSON.parse(localStorage.mkSens||'{}')||{};if(Number.isFinite(t.s))SEN.s=Math.max(.5,Math.min(2,t.s));if(Number.isFinite(t.v))SEN.v=Math.max(.3,Math.min(3,t.v))}catch(e){}
 const saveSen=()=>{try{localStorage.mkSens=JSON.stringify(SEN)}catch(e){}};
@@ -774,9 +774,10 @@ function bcl(x,y,d){const W=innerWidth,H=innerHeight;return{x:Math.max(d/2,Math.
 function bpos(id){const W=innerWidth,H=innerHeight,u=BC[id],f=BD[id];
  if(u&&Number.isFinite(u.x)&&Number.isFinite(u.y)&&Number.isFinite(u.d))return bcl(u.x*W,u.y*H,bsz(id,u.d));
  return id=='joy'?bcl(64+f.d/2,H-72-f.d/2,f.d):bcl(W-f.r,H-f.b,f.d)}
-const bfs=(id,d)=>Math.round(d*(id=='bs'?.42:id=='joy'?.4:.19));
-function layBtn(){if(!BD)return;const pn=$('pnt'),pv=!pn.hidden,lim=innerHeight-(pv?pn.offsetHeight:0)-8;
- for(const id of BIDS){const e=$(id),p=bpos(id);let y=p.y;if(pv&&y+p.d/2>lim)y=Math.max(p.d/2,lim-p.d/2);
+const BFS={bs:.42,joy:.4,bu:.42,bd:.42,bl:.2,bdr:.19,bj:.19},bfs=(id,d)=>Math.round(d*(BFS[id]||.19));
+function layBtn(){if(!BD)return;const pn=$('pnt'),pv=!pn.hidden,lim=innerHeight-(pv?pn.offsetHeight:0)-8;let lift=0;
+ if(pv)for(const id of GRP){const p=bpos(id);lift=Math.max(lift,p.y+p.d/2-lim)}
+ for(const id of BIDS){const e=$(id),p=bpos(id);let y=p.y;if(pv){if(GRP.includes(id))y=Math.max(p.d/2,y-lift);else if(y+p.d/2>lim)y=Math.max(p.d/2,lim-p.d/2)}
   e.style.left=(p.x-p.d/2)+'px';e.style.top=(y-p.d/2)+'px';e.style.width=e.style.height=p.d+'px';
   if(id=='joy'){JD=p.d;e.style.bottom='auto';const k=$('knob').style;k.left=k.top=(p.d*.27)+'px';k.width=k.height=(p.d*.46)+'px'}
   else e.style.setProperty('font-size',bfs(id,p.d)+'px','important')}}
@@ -786,8 +787,8 @@ function edDraw(){if(!ED)return;for(const id in ED.g){const g=ED.g[id],c=ED.c[id
  const s=$('eds');s.min=BMN[ED.sel];s.max=BMX[ED.sel];s.value=ED.c[ED.sel].d;$('edn').textContent=BNM[ED.sel];
  $('sns').value=SEN.s;$('snv').value=SEN.v;$('snsv').textContent='×'+SEN.s.toFixed(2);$('snvv').textContent='×'+SEN.v.toFixed(2)}
 function edOpen(){if(ED)return;const ev=$('ed');ED={c:{},g:{},sel:'bs'};ev.querySelectorAll('.gb').forEach(g=>g.remove());
- for(const id of BIDS){ED.c[id]=bpos(id);const g=document.createElement('div'),h=document.createElement('i');g.className='gb';g.textContent=id=='bs'?'🔫':id=='joy'?'🕹':'ジャンプ';h.className='gh';g.appendChild(h);
-  g.style.background=id=='bs'?'#f55':id=='joy'?'#ffffff55':'#fff';g.style.color=id=='bj'?'#222':'#fff';ev.appendChild(g);ED.g[id]=g;
+ for(const id of BIDS){ED.c[id]=bpos(id);const g=document.createElement('div'),h=document.createElement('i');g.className='gb';g.textContent=EDL[id];h.className='gh';g.appendChild(h);
+  g.style.background=EDB[id];g.style.color=EDF[id]||'#222';ev.appendChild(g);ED.g[id]=g;
   g.onpointerdown=e=>{if(e.target===h)return;ED.sel=id;const c=ED.c[id];g.setPointerCapture(e.pointerId);g._o=[e.clientX-c.x,e.clientY-c.y];edDraw();e.preventDefault()};
   g.onpointermove=e=>{if(!g._o)return;const c=ED.c[id];ED.c[id]=bcl(e.clientX-g._o[0],e.clientY-g._o[1],c.d);edDraw()};
   g.onpointerup=g.onpointercancel=()=>{g._o=null};
@@ -826,15 +827,26 @@ function pvDraw(cv,p){const S=cv.width,g=cv.getContext('2d'),J=pvPose(p),cy=Math
  for(const[a,b,w]of L){g.strokeStyle=w>.1?'#ffffff':'#bcd6ff';g.lineWidth=w*k;g.beginPath();g.moveTo(a[0]*k+ox,a[1]*k+oy);g.lineTo(b[0]*k+ox,b[1]*k+oy);g.stroke()}
  g.fillStyle='#ffd86b';g.beginPath();g.arc(H[0]*k+ox,H[1]*k+oy,.13*k,0,6.2832);g.fill()}
 var PW=null;
-function pwBuild(){const N=GP>=0?GP:PO.length,pw=$('pw');pw.innerHTML='';PW={N,t:[]};
- for(let i=0;i<N;i++){const b=document.createElement('button'),c=document.createElement('canvas'),s=document.createElement('span');b.className='pt';c.width=c.height=96;pvDraw(c,PO[i]);s.textContent=PO[i][0];b.append(c,s);
+// ポーズ一覧のプレビュー：ボーン線ではなく、実際のスムースな3Dモデルをそのポーズで描画
+function pvR3(){const S=256,r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setPixelRatio(1);r.setSize(S,S,false);r.setClearColor(0x000000,0);
+ const s=new THREE.Scene();s.add(new THREE.HemisphereLight(0xffffff,0x56606e,1.15));const d=new THREE.DirectionalLight(0xffffff,1.25);d.position.set(-2.2,3.2,3.4);s.add(d);
+ const cam=new THREE.PerspectiveCamera(26,1,.1,60),f=mkFig('pv');f.mesh.material=new THREE.MeshLambertMaterial({color:0xe9e5dc});s.add(f.root);return{S,r,s,cam,f}}
+function pvDraw3(P3,cv,i){const{r,s,cam,f}=P3,g=cv.getContext('2d'),V=THREE.Vector3;
+ setPose(f,i);f.gun.visible=false;f.root.updateMatrixWorld(true);
+ const pts=Object.values(f.bones).map(b=>b.getWorldPosition(new V())),c=new THREE.Box3().setFromPoints(pts).getCenter(new V()),az=-.6,el=.22,
+  dir=new V(Math.sin(az)*Math.cos(el),Math.sin(el),Math.cos(az)*Math.cos(el)),rt=new V(0,1,0).cross(dir).normalize(),up=dir.clone().cross(rt),t=Math.tan(13*Math.PI/180);
+ let D=2;for(const p of pts){const q=p.clone().sub(c);D=Math.max(D,q.dot(dir)+(Math.hypot(q.dot(rt),q.dot(up))+.13)/(.8*t))}
+ cam.position.copy(c).addScaledVector(dir,D);cam.up.set(0,1,0);cam.lookAt(c);cam.updateMatrixWorld(true);r.render(s,cam);
+ const z=cv.width;g.clearRect(0,0,z,z);const gr=g.createRadialGradient(z/2,z*.42,z*.05,z/2,z/2,z*.62);gr.addColorStop(0,'#41536b');gr.addColorStop(1,'#19222d');g.fillStyle=gr;g.fillRect(0,0,z,z);g.drawImage(r.domElement,0,0,z,z)}
+function pwBuild(){const N=GP>=0?GP:PO.length,pw=$('pw');pw.innerHTML='';PW={N,t:[]};let P3=null;try{P3=pvR3()}catch(e){P3=null}
+ for(let i=0;i<N;i++){const b=document.createElement('button'),c=document.createElement('canvas'),s=document.createElement('span');b.className='pt';c.width=c.height=256;if(P3){try{pvDraw3(P3,c,i)}catch(e){pvDraw(c,PO[i])}}else pvDraw(c,PO[i]);s.textContent=PO[i][0];b.append(c,s);
   b.onclick=()=>{if(RM[myId])setPose(RM[myId].f,i);pwClose()};
   b.onpointerenter=()=>{$('pc').textContent=PO[i][0]};b.onpointerleave=()=>{$('pc').textContent='ポーズ\n選んでね'};pw.appendChild(b);PW.t.push(b)}
- const c=document.createElement('div');c.id='pc';c.textContent='ポーズ\n選んでね';c.onclick=pwClose;pw.appendChild(c);
+ if(P3){try{P3.r.dispose();P3.r.forceContextLoss()}catch(e){}}const c=document.createElement('div');c.id='pc';c.textContent='ポーズ\n選んでね';c.onclick=pwClose;pw.appendChild(c);
  pw.onpointerdown=e=>{if(e.target===pw)pwClose()}}
-function pwLay(){const W=innerWidth,H=innerHeight,m=Math.min(W,H),N=PW.N,k=1.8*Math.sin(Math.PI/N),R=(m/2-10)/(1+k/2),t=Math.max(40,Math.min(96,R*k)),cx=W/2,cy=H/2,cur=RM[myId]?RM[myId].f.pi:-1;
- PW.t.forEach((b,i)=>{const a=-Math.PI/2+2*Math.PI*i/N;b.style.width=b.style.height=t+'px';b.style.left=(cx+R*Math.cos(a)-t/2)+'px';b.style.top=(cy+R*Math.sin(a)-t/2)+'px';b.classList.toggle('cur',i==cur);b.lastChild.style.fontSize=Math.max(9,Math.round(t*.17))+'px'});
- const d=Math.max(56,Math.min(2*(R-t/2)-14,120)),c=$('pc');c.style.width=c.style.height=d+'px';c.style.left=(cx-d/2)+'px';c.style.top=(cy-d/2)+'px';c.style.fontSize=Math.max(11,Math.round(d*.16))+'px'}
+function pwLay(){const W=innerWidth,H=innerHeight,m=Math.min(W,H),N=PW.N,k=1.8*Math.sin(Math.PI/N),R=(m/2-10)/(1+k/2),t=Math.max(40,Math.min(200,R*k)),cx=W/2,cy=H/2,cur=RM[myId]?RM[myId].f.pi:-1;
+ PW.t.forEach((b,i)=>{const a=-Math.PI/2+2*Math.PI*i/N;b.style.width=b.style.height=t+'px';b.style.left=(cx+R*Math.cos(a)-t/2)+'px';b.style.top=(cy+R*Math.sin(a)-t/2)+'px';b.classList.toggle('cur',i==cur);b.lastChild.style.fontSize=Math.max(9,Math.round(t*.15))+'px'});
+ const d=Math.max(56,Math.min(2*(R-t/2)-14,170)),c=$('pc');c.style.width=c.style.height=d+'px';c.style.left=(cx-d/2)+'px';c.style.top=(cy-d/2)+'px';c.style.fontSize=Math.max(11,Math.round(d*.16))+'px'}
 function pwOpen(){if(!PW)pwBuild();$('pc').textContent='ポーズ\n選んでね';pwLay();$('pw').hidden=false}
 function pwClose(){$('pw').hidden=true}
 $('pb').onclick=()=>{$('pw').hidden?pwOpen():pwClose()};
