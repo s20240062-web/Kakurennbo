@@ -189,7 +189,7 @@ function house(cx,cz,w,d,sg){const h=3.6,th=.25,fh=3.4,iw=w-2*th,dd=d-2*th,bz=cz
  box(cx,fh,cz,w,.2,d,lam(0xe8e0d0),1);B.push({a:cx-w/2,b:cx+w/2,c:YO+h,d:YO+h+2.3,e:cz-d/2,f:cz+d/2,i:0,nc:1});flat(cx,.04,cz,iw,dd,floorM);
  const r=new THREE.Mesh(new THREE.ConeGeometry(Math.max(w,d)*.78,2.2,4),roofM());r.rotation.y=Math.PI/4;r.position.set(cx,h+1.1,cz);ROOT.add(r);
  box(cx,h-.05,cz,w+.9,.12,d+.9,lam(0x4a3a32),0);box(cx+w*.28,h,cz-d*.2,.6,2.2,.6,lam(0x8a4a3a),0);
- box(cx,0,cz+sg*(d/2+.4),1.8,.15,.8,lam(0x999990),0);box(cx+w*.35,0,cz+sg*(d/2+.5),.12,1,.2,lam(0x888888),0);
+ box(cx,0,cz+sg*(d/2+.4),1.8,.15,.8,lam(0x999990),1);B[B.length-1].nc=1;box(cx+w*.35,0,cz+sg*(d/2+.5),.12,1,.2,lam(0x888888),0);
  for(const s of[-1,1]){const b=new THREE.Mesh(new THREE.SphereGeometry(.5,8,6),leafM[1]);b.position.set(cx+s*1.3,.4,cz+sg*(d/2+.6));ROOT.add(b)}
  box(lx+.55,0,Z(1.2),1.1,.35,2.2,woodM,2);box(lx+.55,.35,Z(1.3),1,.25,2,quiltM(),2);box(lx+.55,.6,Z(.45),.8,.12,.4,lam(0xf4f1ea),0);box(lx+.55,.35,Z(.06),1.1,.7,.1,woodM,0);
  box(lx+1.5,0,Z(.35),.5,.5,.5,woodM,2);cy(lx+1.5,.5,Z(.35),.07,.3,bas(0xffe8a0),0);
@@ -628,7 +628,7 @@ const paintUI=()=>!dr&&((ph=='paint'&&role()!='free')||(ph=='seek'&&role()=='hid
 let toastT;function show(t,ms=2500){$('msg').textContent=t;clearTimeout(toastT);toastT=setTimeout(()=>$('msg').textContent='',ms)}
 const chatT={};
 function addChat(id,t){const l=$('cl'),d=document.createElement('div'),b=document.createElement('b');b.textContent=(P[id]?P[id].n:'?')+': ';d.append(b,document.createTextNode(String(t).slice(0,60)));l.appendChild(d);while(l.children.length>40)l.removeChild(l.firstChild);l.scrollTop=l.scrollHeight}
-function addLog(a,b){const l=$('cl'),d=document.createElement('div');d.style.color='#ff6b6b';d.style.fontWeight='700';d.textContent='👹 '+a+' → '+b+' を発見';l.appendChild(d);while(l.children.length>40)l.removeChild(l.firstChild);l.scrollTop=l.scrollHeight}
+const LG=new Set();function addLog(a,b){const l=$('cl'),d=document.createElement('div');d.style.color='#ff6b6b';d.style.fontWeight='700';d.textContent='👹 '+a+' → '+b+' を発見';l.appendChild(d);while(l.children.length>40)l.removeChild(l.firstChild);l.scrollTop=l.scrollHeight}
 function sendChat(){const i=$('ci'),t=i.value.trim();if(!t)return;i.value='';tell({k:'chat',t:t.slice(0,60)})}
 $('cs').onclick=sendChat;$('ci').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();sendChat()}};
 const PN={lobby:'待機中',paint:'ペイント',seek:'探索',reveal:'答え合わせ'};
@@ -654,7 +654,7 @@ function onH(id,d){
  else if(d.k=='chat'){const t=String(d.t||'').trim().slice(0,60),n=Date.now();if(t&&P[id]&&n-(chatT[id]||0)>400){chatT[id]=n;bc({k:'chat',id,t})}}
  else if(d.k=='fw'&&phh=='seek'&&P[id]&&P[id].role=='hider'&&[1,2,3].includes(d.lv)&&[d.x,d.y,d.z].every(Number.isFinite))bc({k:'fw',id,x:d.x,y:d.y,z:d.z,lv:d.lv})
  else if(d.k=='start'&&id==myId)start();
- else if(d.k=='shot'&&phh=='seek'&&P[id]&&P[id].role=='oni'&&P[d.t]&&P[d.t].role=='hider'){P[d.t].role='oni';P[d.t].found=1;delete FIN[d.t];bc({k:'found',id:d.t,by:id,P})}}
+ else if(d.k=='shot'&&phh=='seek'&&P[id]&&P[id].role=='oni'&&d.t!=id&&P[d.t]&&P[d.t].role=='hider'){P[d.t].role='oni';P[d.t].found=1;delete FIN[d.t];bc({k:'found',id:d.t,by:id,P})}}
 function hostLoop(){setInterval(()=>{bc({k:'S',s:SS})},100);
  setInterval(()=>{if(phh=='lobby')return;T0-=.2;
   if(phh=='paint'&&T0<=0){phh='collect';T0=2.5}
@@ -670,7 +670,7 @@ function join(){const name=$('nm').value.trim()||('ゲスト'+(Math.random()*99|
 function tp(s){me.x=s[0];me.z=s[1];me.y=0;me.vy=0;me.yaw=Math.random()*6.28;me.pit=0;me.fy=me.yaw+Math.PI}
 function clearHL(){HL.forEach(o=>sc.remove(o));HL=[]}
 function mats(){for(const i in RM)matMode(RM[i].f,P[i]&&P[i].role=='oni')}
-function enter(p){ph=p;if(!(p=='seek'&&dr))dr=null;finSent=0;clearHL();if(p=='paint'){myPts=0;tnSet(0);SCS={}}if(p=='reveal'&&role()=='hider')tell({k:'pts',p:+myPts.toFixed(2)});
+function enter(p){ph=p;if(!(p=='seek'&&dr))dr=null;finSent=0;clearHL();if(p=='paint'){LG.clear();myPts=0;tnSet(0);SCS={}}if(p=='reveal'&&role()=='hider')tell({k:'pts',p:+myPts.toFixed(2)});
  if(p=='lobby'||p=='paint'){for(const i in RM){wipe(RM[i].f);setPose(RM[i].f,0)}locked=0;tool=0;az=0;zm=1;PX=PY=0;setTool(0)}
  if(p=='lobby')tp(spot());
  if(p=='paint'){if(role()=='oni'){me.pit=.2;show('【'+MAPS[MI].name+'】あなたは鬼！\n待ち時間にアバターを描こう',4000)}else{tp(spot());show('【'+MAPS[MI].name+'】隠れる場所へ移動しながら描ける！\n決まったら「ここに固定」。壁際の▲▼で登れます',4500)}}
@@ -685,7 +685,7 @@ function onMsg(m){
  else if(m.k=='fin'){if(m.id!=myId)loadTex(getRM(m.id).f,m.tex)}
  else if(m.k=='chat')addChat(m.id,m.t)
  else if(m.k=='fw'){if(m.id!=myId&&ph=='seek')fwLaunch(m.x,m.y,m.z,m.lv)}
- else if(m.k=='found'){P=m.P;const r=getRM(m.id);if(m.id==myId){locked=0;tell({k:'pts',p:+myPts.toFixed(2)});tnSet(0);show('見つかった！\nあなたも鬼になった👹')}else show((P[m.id]?P[m.id].n:'')+' が見つかった！');addLog(P[m.by]?P[m.by].n:'鬼',P[m.id]?P[m.id].n:'?');setPose(r.f,0);mats();ui()}}
+ else if(m.k=='found'){P=m.P;const r=getRM(m.id);if(m.id==myId){locked=0;tell({k:'pts',p:+myPts.toFixed(2)});tnSet(0);show('見つかった！\nあなたも鬼になった👹')}else show((P[m.id]?P[m.id].n:'')+' が見つかった！');if(m.by!=m.id&&P[m.by]&&P[m.by].role=='oni'&&P[m.id]&&P[m.id].found&&!LG.has(m.id)){LG.add(m.id);addLog(P[m.by].n,P[m.id].n)}setPose(r.f,0);mats();ui()}}
 function doLock(){locked=1}
 function sendFin(){finSent=1;tell({k:'fin',tex:getRM(myId).f.cv.toDataURL('image/jpeg',.85)});ui()}
 setInterval(()=>{if(ph!='menu'&&myId){const r=getRM(myId);tell({k:'st',s:[...(studio()?[0,200,0,0]:[me.x,me.y,me.z,me.fy]),me.pit,r.f.pi,expo?1:0,(ph=='seek'&&role()=='hider')?tn:0]})}},100);
