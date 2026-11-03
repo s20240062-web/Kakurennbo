@@ -547,10 +547,7 @@ function burFrac(){const w=.15,h=.85,nx=4,ny=5,nz=4,x0=me.x-w,x1=me.x+w,y0=me.y,
  for(let i=0;i<nx;i++)for(let j=0;j<ny;j++)for(let k=0;k<nz;k++){const px=x0+(i+.5)/nx*2*w,py=y0+(j+.5)/ny*h,pz=z0+(k+.5)/nz*2*w;
   if(bs.some(b=>px>b.a&&px<b.b&&pz>b.e&&pz<b.f&&py>b.c&&py<b.d)||ss.some(q=>(px-q.x)**2+(py-q.y)**2+(pz-q.z)**2<q.r*q.r))n++}
  return n/(nx*ny*nz)}
-function burCheck(dt){if(tps()){const f=burFrac();if(f>=.5){const first=bur==0;bur+=dt;const l=10-bur;
-  if(l>0){if(first||FR%25==0)show('⚠️ 体の'+Math.round(f*100)+'%がオブジェクトにめり込んでいます！\nあと'+Math.ceil(l)+'秒この状態だと鬼に場所が公開されます',800)}
-  else{expo=1;if(FR%25==0)show('🔴 場所が鬼に公開されています！\nオブジェクトから出て！',800)}}
- else{bur=0;if(expo){expo=0;show('公開が解除された',1000)}}}else{bur=0;expo=0}}
+function burCheck(dt){bur=0;expo=0}
 const me={x:0,y:0,z:0,vy:0,yaw:0,pit:0,on:0,fy:0,cl:0};
 const nearW=()=>B.some(b=>!b.nc&&me.x>b.a-.8&&me.x<b.b+.8&&me.z>b.e-.8&&me.z<b.f+.8&&me.y+1.7*HS>b.c-.1&&me.y<b.d+.4);
 const stepUp=b=>{if(b.d-me.y>.55)return 0;const y=me.y;me.y=b.d;if(hit(me.x,me.y,me.z)){me.y=y;return 0}me.vy=0;me.on=1;return 1};
