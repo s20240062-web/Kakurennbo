@@ -587,7 +587,7 @@ const MODEL=await new Promise((ok,ng)=>new GLTFLoader().parse(Uint8Array.from(at
  const bw=n=>{let r;S.traverse(o=>{if(o.name==n)r=o});return r.getWorldPosition(new THREE.Vector3())};
  const rt=bw('R_Upperarm').sub(bw('L_Upperarm'));rt.y=0;rt.normalize();const fw=new THREE.Vector3(0,1,0).cross(rt);MODEL.rot=-Math.atan2(fw.x,fw.z);
  S.traverse(o=>{if(o.isSkinnedMesh){o.geometry.computeBoundingSphere();o.geometry.boundingSphere.radius*=1.8}})}
-const LS=[[.08,-1,0],[.08,-1,0],[-.08,-1,0],[-.08,-1,0]];
+const LS=[[.08,-1,0],[.08,-1,0],[-.08,-1,0],[-.08,-1,0]];let GP=-1;
 const PO=[['立つ',[[.2,-1,0],[.15,-1,.1],[-.2,-1,0],[-.15,-1,.1]],LS],['気をつけ',[[.04,-1,0],[.04,-1,0],[-.04,-1,0],[-.04,-1,0]],[[.02,-1,0],[.02,-1,0],[-.02,-1,0],[-.02,-1,0]]],
 ['T字',[[1,0,0],[1,0,0],[-1,0,0],[-1,0,0]],LS],['万歳',[[.4,1,0],[.3,1,0],[-.4,1,0],[-.3,1,0]],LS],['片手',[[.2,-1,0],[.15,-1,.1],[-.3,1,0],[-.3,1,0]],LS],
 ['すわる',[[.3,-1,.2],[.2,-.4,1],[-.3,-1,.2],[-.2,-.4,1]],[[.15,-.02,1],[.15,-.1,1],[-.15,-.02,1],[-.15,-.1,1]],0,-.78],
@@ -602,16 +602,19 @@ function aim(f,bn,cn,d,rq){f.root.updateMatrixWorld(true);const b=f.bones[bn],c=
  turn(f,bn,new THREE.Quaternion().setFromUnitVectors(_c,new THREE.Vector3(...d).normalize().applyQuaternion(rq)))}
 function setPose(f,i){f.pi=i;const p=PO[i],rq=new THREE.Quaternion();for(const n in f.bones)f.bones[n].quaternion.copy(f.rest[n]);f.body.position.y=p[4]||0;f.body.rotation.set(p[5]||0,p[7]||0,0,'YXZ');f.body.position.z=p[6]||0;
  f.root.updateMatrixWorld(true);f.root.getWorldQuaternion(rq);
- if(p[3]){turn(f,'Spine01',new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0).applyQuaternion(rq),p[3]));f.root.updateMatrixWorld(true)}
- if(p[8])for(const[n,ang]of p[8]){turn(f,n,new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0).applyQuaternion(rq),ang));f.root.updateMatrixWorld(true)}
- const a=p[1],l=p[2];aim(f,'L_Upperarm','L_Forearm',a[0],rq);aim(f,'L_Forearm','L_Hand',a[1],rq);aim(f,'R_Upperarm','R_Forearm',a[2],rq);aim(f,'R_Forearm','R_Hand',a[3],rq);
+ const pt=f.pt||0,sp=(p[3]||0)-pt*.32;if(sp){turn(f,'Spine01',new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0).applyQuaternion(rq),sp));f.root.updateMatrixWorld(true)}
+ const ex=(p[8]||[]).concat(pt?[['Spine02',-pt*.28],['Head',-pt*.2]]:[]);
+ if(ex.length)for(const[n,ang]of ex){turn(f,n,new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0).applyQuaternion(rq),ang));f.root.updateMatrixWorld(true)}
+ const rt=v=>{if(!pt)return v;const c=Math.cos(-pt),s=Math.sin(-pt);return[v[0],v[1]*c-v[2]*s,v[1]*s+v[2]*c]};const a=p[1].map(rt),l=p[2];aim(f,'L_Upperarm','L_Forearm',a[0],rq);aim(f,'L_Forearm','L_Hand',a[1],rq);aim(f,'R_Upperarm','R_Forearm',a[2],rq);aim(f,'R_Forearm','R_Hand',a[3],rq);if(f.gun)f.gun.visible=i==GP;
  aim(f,'L_Thigh','L_Calf',l[0],rq);aim(f,'L_Calf','L_Foot',l[1],rq);aim(f,'R_Thigh','R_Calf',l[2],rq);aim(f,'R_Calf','R_Foot',l[3],rq)}
 function mkFig(id){const root=new THREE.Group(),body=new THREE.Group(),inner=new THREE.Group(),m=SkeletonUtils.clone(MODEL.scene);root.add(body);body.add(inner);inner.add(m);
  inner.rotation.y=MODEL.rot;inner.scale.setScalar(MODEL.k);inner.position.y=MODEL.oy;
  let mesh;const bones={},rest={};m.traverse(o=>{if(o.isSkinnedMesh)mesh=o;if(o.isBone){bones[o.name]=o;rest[o.name]=o.quaternion.clone()}});mesh.frustumCulled=false;
  const cv=document.createElement('canvas');cv.width=cv.height=512;const x=cv.getContext('2d');x.fillStyle='#cdc8bf';x.fillRect(0,0,512,512);
  const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;const b=new THREE.MeshBasicMaterial({map:t}),l=new THREE.MeshLambertMaterial({map:t});mesh.material=b;mesh.userData={pid:id,cx:x,t,b,l};
- const f={root,body,mesh,bones,rest,cv,pi:0};setPose(f,0);return f}
+ const gun=new THREE.Group();[[.06,.09,.62,0,0,.12,0x6b3b1a],[.03,.03,.3,0,.01,.58,0x333333],[.05,.13,.06,0,-.09,-.02,0x222222]].forEach(([w,h,d,x,y,z,c])=>{const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),lam(c));q.position.set(x,y,z);gun.add(q)});
+ gun.scale.setScalar(1/MODEL.k);gun.quaternion.set(-.2983,-.6141,-.5721,.4546);gun.position.set(0,.04,0);gun.visible=false;bones.R_Hand.add(gun);
+ const f={root,body,mesh,bones,rest,cv,pi:0,pt:0,gun};setPose(f,0);return f}
 const matMode=(f,l)=>{f.mesh.material=l?f.mesh.userData.l:f.mesh.userData.b};
 const wipe=f=>{const u=f.mesh.userData;u.cx.fillStyle='#cdc8bf';u.cx.fillRect(0,0,512,512);u.t.needsUpdate=true};
 const loadTex=(f,url)=>{const im=new Image();im.onload=()=>{const u=f.mesh.userData;u.cx.drawImage(im,0,0);u.t.needsUpdate=true};im.src=url};
@@ -625,6 +628,7 @@ const paintUI=()=>!dr&&((ph=='paint'&&role()!='free')||(ph=='seek'&&role()=='hid
 let toastT;function show(t,ms=2500){$('msg').textContent=t;clearTimeout(toastT);toastT=setTimeout(()=>$('msg').textContent='',ms)}
 const chatT={};
 function addChat(id,t){const l=$('cl'),d=document.createElement('div'),b=document.createElement('b');b.textContent=(P[id]?P[id].n:'?')+': ';d.append(b,document.createTextNode(String(t).slice(0,60)));l.appendChild(d);while(l.children.length>40)l.removeChild(l.firstChild);l.scrollTop=l.scrollHeight}
+function addLog(a,b){const l=$('cl'),d=document.createElement('div');d.style.color='#ff6b6b';d.style.fontWeight='700';d.textContent='👹 '+a+' → '+b+' を発見';l.appendChild(d);while(l.children.length>40)l.removeChild(l.firstChild);l.scrollTop=l.scrollHeight}
 function sendChat(){const i=$('ci'),t=i.value.trim();if(!t)return;i.value='';tell({k:'chat',t:t.slice(0,60)})}
 $('cs').onclick=sendChat;$('ci').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();sendChat()}};
 const PN={lobby:'待機中',paint:'ペイント',seek:'探索',reveal:'答え合わせ'};
@@ -650,7 +654,7 @@ function onH(id,d){
  else if(d.k=='chat'){const t=String(d.t||'').trim().slice(0,60),n=Date.now();if(t&&P[id]&&n-(chatT[id]||0)>400){chatT[id]=n;bc({k:'chat',id,t})}}
  else if(d.k=='fw'&&phh=='seek'&&P[id]&&P[id].role=='hider'&&[1,2,3].includes(d.lv)&&[d.x,d.y,d.z].every(Number.isFinite))bc({k:'fw',id,x:d.x,y:d.y,z:d.z,lv:d.lv})
  else if(d.k=='start'&&id==myId)start();
- else if(d.k=='shot'&&phh=='seek'&&P[id]&&P[id].role=='oni'&&P[d.t]&&P[d.t].role=='hider'){P[d.t].role='oni';P[d.t].found=1;delete FIN[d.t];bc({k:'found',id:d.t,P})}}
+ else if(d.k=='shot'&&phh=='seek'&&P[id]&&P[id].role=='oni'&&P[d.t]&&P[d.t].role=='hider'){P[d.t].role='oni';P[d.t].found=1;delete FIN[d.t];bc({k:'found',id:d.t,by:id,P})}}
 function hostLoop(){setInterval(()=>{bc({k:'S',s:SS})},100);
  setInterval(()=>{if(phh=='lobby')return;T0-=.2;
   if(phh=='paint'&&T0<=0){phh='collect';T0=2.5}
@@ -681,7 +685,7 @@ function onMsg(m){
  else if(m.k=='fin'){if(m.id!=myId)loadTex(getRM(m.id).f,m.tex)}
  else if(m.k=='chat')addChat(m.id,m.t)
  else if(m.k=='fw'){if(m.id!=myId&&ph=='seek')fwLaunch(m.x,m.y,m.z,m.lv)}
- else if(m.k=='found'){P=m.P;const r=getRM(m.id);if(m.id==myId){locked=0;tell({k:'pts',p:+myPts.toFixed(2)});tnSet(0);show('見つかった！\nあなたも鬼になった👹')}else show((P[m.id]?P[m.id].n:'')+' が見つかった！');setPose(r.f,0);mats();ui()}}
+ else if(m.k=='found'){P=m.P;const r=getRM(m.id);if(m.id==myId){locked=0;tell({k:'pts',p:+myPts.toFixed(2)});tnSet(0);show('見つかった！\nあなたも鬼になった👹')}else show((P[m.id]?P[m.id].n:'')+' が見つかった！');addLog(P[m.by]?P[m.by].n:'鬼',P[m.id]?P[m.id].n:'?');setPose(r.f,0);mats();ui()}}
 function doLock(){locked=1}
 function sendFin(){finSent=1;tell({k:'fin',tex:getRM(myId).f.cv.toDataURL('image/jpeg',.85)});ui()}
 setInterval(()=>{if(ph!='menu'&&myId){const r=getRM(myId);tell({k:'st',s:[...(studio()?[0,200,0,0]:[me.x,me.y,me.z,me.fy]),me.pit,r.f.pi,expo?1:0,(ph=='seek'&&role()=='hider')?tn:0]})}},100);
@@ -747,6 +751,7 @@ $('fill').onclick=()=>{const u=RM[myId].f.mesh.userData;u.cx.fillStyle=$('col').
   b.onpointerup=b.onpointerleave=b.onpointercancel=()=>clearTimeout(t);
   b.onclick=()=>{if(lg){lg=0;return}$('col').value=pal[i]};$('pal').appendChild(b)})}
 PO.forEach(([n],i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>setPose(RM[myId].f,i);$('pz').appendChild(b)});
+GP=PO.push(['鬼構え',[[.2,-1,0],[.15,-1,.1],[-.3,-.55,.6],[-.1,.1,1]],LS])-1;
 $('st').onclick=()=>tell({k:'start'});$('go').onclick=join;$('nm').value=localStorage.mkk||'';
 addEventListener('keydown',e=>{if(e.target&&e.target.tagName=='INPUT')return;K[e.code]=1;if(e.code=='Space')jump=1;if(e.code=='Enter')shoot()});addEventListener('keyup',e=>K[e.code]=0);
 // ---------- 挑発・見過ごしポイント ----------
@@ -790,6 +795,9 @@ function oversight(dt){if(!(ph=='seek'&&role()=='hider')){stillT=0;return}
 setInterval(()=>{if(ph=='seek'&&role()=='hider'&&myId)tell({k:'pts',p:+myPts.toFixed(2)})},1000);
 // ---------- ループ ----------
 const gun=new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.8),lam(0x222222));gun.position.set(.25,-.22,-.5);cam.add(gun);
+const NL={};function nameTag(id){const n=P[id]?P[id].n:'';let t=NL[id];if(!t||t.n!==n){if(t){t.s.material.map.dispose();t.s.material.dispose();sc.remove(t.s)}
+ const c=document.createElement('canvas');c.width=320;c.height=64;const g=c.getContext('2d');g.font='bold 30px sans-serif';g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=6;g.strokeStyle='rgba(0,0,0,.55)';g.strokeText(n,160,34);g.fillStyle='#ff4040';g.fillText(n,160,34);
+ const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false,fog:false}));sp.scale.set(1,.2,1);sc.add(sp);t=NL[id]={n,s:sp}}return t.s}
 const BX={};let last=performance.now();
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;cd-=dt;FR++;HS=role()=='hider'&&(ph=='paint'||ph=='seek'||ph=='reveal')?.5:1;
  const w=walk(),nr=w&&nearW();$('bu').hidden=$('bd').hidden=!(nr||dr);if(!(nr||dr))up=dn=0;
@@ -799,10 +807,13 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
   jump=0;mv(mx,mz,dt,dr?0:up,dr?0:dn,nr);if(HS==1)eject();if(mx||mz||HS==1)me.fy=me.yaw+Math.PI}
   burCheck(dt);if(me.warn){if(FR%40==0)show('これ以上は登れません（範囲外）',900);me.warn=0}
  const ho=role()=='hider'&&(ph=='paint'||ph=='seek');
+ {const f0=RM[myId]&&RM[myId].f;if(f0){const w=ph=='seek'&&role()=='oni';if(w&&f0.pi!=GP)setPose(f0,GP);else if(!w&&f0.pi==GP)setPose(f0,0)}}
+ for(const id in NL)if(!RM[id]){sc.remove(NL[id].s);delete NL[id]}
  for(const id in RM){const r=RM[id],f=r.f;let p,v=0;
   if(id==myId){if(studio()){p=[0,200,0,0];v=1}else if(tps()){p=[me.x,me.y,me.z,me.fy];v=1}}
-  else if(r.s&&!studio()&&!(r.s[1]>100)&&!(ho&&P[id]&&P[id].role=='hider')){p=r.s;v=1;if(r.s[5]!=null&&f.pi!=r.s[5])setPose(f,r.s[5])}
-  f.root.scale.setScalar(P[id]&&P[id].role=='hider'?.5:1);f.root.visible=!!v;if(v){f.root.position.set(p[0],p[1],p[2]);f.root.rotation.y=p[3]}}
+  else if(r.s&&!studio()&&!(r.s[1]>100)&&!(ho&&P[id]&&P[id].role=='hider')){p=r.s;v=1;{const q=P[id]&&P[id].role=='oni'?Math.round(Math.max(-1.1,Math.min(1.1,r.s[4]||0))*20)/20:0,chg=f.pt!==q;f.pt=q;if(r.s[5]!=null&&f.pi!=r.s[5])setPose(f,r.s[5]);else if(chg)setPose(f,f.pi)}}
+  f.root.scale.setScalar(P[id]&&P[id].role=='hider'?.5:1);f.root.visible=!!v;if(v){f.root.position.set(p[0],p[1],p[2]);f.root.rotation.y=p[3]}
+  if(id!=myId&&v&&P[id]&&P[id].role=='oni'){const t=nameTag(id);t.visible=true;t.position.set(p[0],p[1]+2.05,p[2])}else if(NL[id])NL[id].s.visible=false}
  HL.forEach(o=>{const u=o.userData,p=u.id==myId?[me.x,me.y,me.z]:(RM[u.id]&&RM[u.id].s);const hs=P[u.id]&&P[u.id].role=='hider'?.5:1;o.scale.setScalar(hs);if(p)o.position.set(p[0],p[1]+u.h*hs,p[2]);o.material.opacity=u.o*(.6+.4*Math.sin(now/200))});
  for(const id in BX)if(!RM[id]){sc.remove(BX[id]);delete BX[id]}
   for(const id in RM){const r=RM[id],on=ph=='seek'&&role()=='oni'&&P[id]&&P[id].role=='hider'&&r.s&&r.s[6];let m=BX[id];if(on){if(!m){m=BX[id]=new THREE.Group();[[new THREE.BoxGeometry(1,1.4,1),.7,.4],[new THREE.CylinderGeometry(.06,.06,16,8),8,.6]].forEach(([g,h,o])=>{const q=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xff3030,transparent:true,opacity:o,depthTest:false}));q.position.y=h;q.renderOrder=999;m.add(q)});sc.add(m)}m.position.set(r.s[0],r.s[1],r.s[2]);m.visible=true}else if(m)m.visible=false}
