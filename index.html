@@ -1200,7 +1200,7 @@ $('dbp').onclick=e=>{const b=e.target.closest('button');if(!b)return;DM=+b.datas
 const sfree=(x,z,r)=>!B.some(b=>b.c<2.5&&x+r>b.a&&x-r<b.b&&z+r>b.e&&z-r<b.f);
 const spot=()=>{const m=MAPS[MI];for(let n=0;n<600;n++){const x=m.wb[0]+1.5+Math.random()*(m.wb[1]-m.wb[0]-3),z=m.wb[2]+1.5+Math.random()*(m.wb[3]-m.wb[2]-3);if(MI?sfree(x,z,.7):free(x,z,.7))return[x,z]}return[(m.wb[0]+m.wb[1])/2,(m.wb[2]+m.wb[3])/2]};
 // ---------- 当たり判定・移動 ----------
-let HS=1;const hit=(x,y,z)=>{const w=.3*HS,h=1.7*HS,k=HS<1?1:0;return B.find(b=>{const i=k*b.i;return x+w>b.a+i&&x-w<b.b-i&&z+w>b.e+i&&z-w<b.f-i&&y+h>b.c&&y<b.d})};
+let HS=1;const hit=(x,y,z)=>{const w=.3*HS,h=1.7*HS,k=HS<1?.15:0;return B.find(b=>{const i=k*b.i;return x+w>b.a+i&&x-w<b.b-i&&z+w>b.e+i&&z-w<b.f-i&&y+h>b.c&&y<b.d})};
 const _cp=new THREE.Vector3(),inB=(x,y,z,m)=>B.find(b=>x>b.a-m&&x<b.b+m&&z>b.e-m&&z<b.f+m&&y>b.c-m&&y<b.d+m);
 function eject(){for(let n=0;n<4;n++){const b=hit(me.x,me.y,me.z);if(!b)return;const x=me.x,z=me.z,w=.3*HS,c=[[x+w-b.a,-1,0],[b.b-(x-w),1,0],[z+w-b.e,0,-1],[b.f-(z-w),0,1]].sort((p,q)=>p[0]-q[0])[0];me.x+=c[1]*(c[0]+.01);me.z+=c[2]*(c[0]+.01)}}
 function pushEye(p){for(let n=0;n<4;n++){const b=inB(p.x,p.y,p.z,.21);if(!b)return;
@@ -1525,7 +1525,7 @@ function tnSet(v){tn=v;tb.forEach((x,j)=>x.style.background=tn==j+1?'#e53935':'r
  b.onclick=()=>taunt(i+1);tnP.appendChild(b);tb.push(b)});document.body.appendChild(tnP);
 let tnCD=0,tnUntil=0;
 // 花火は本人の足元ではなく「近くのどこか」から上がる。派手(大)なほどズレ幅が小さく＝居場所がバレやすい
-const FWR=[0,13,7.5,3.2];
+const FWR=[0,20,13,7.5];
 function fwSpot(lv){const sc_=MI==0?1:MI==1?.55:.6,R=FWR[lv]*sc_;let bx=me.x,bz=me.z;
  for(let n=0;n<14;n++){const a=Math.random()*6.2832,r=R*(.3+.7*Math.sqrt(Math.random())),x=Math.max(WB.x0+.8,Math.min(WB.x1-.8,me.x+Math.cos(a)*r)),z=Math.max(WB.z0+.8,Math.min(WB.z1-.8,me.z+Math.sin(a)*r));bx=x;bz=z;if(!inB(x,me.y+.5,z,.25))break}
  return[bx,MI==0?gh(bx,bz):me.y,bz]}
