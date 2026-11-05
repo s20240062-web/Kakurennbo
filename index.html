@@ -70,7 +70,7 @@ button,input,#pnt{touch-action:manipulation}#joy,#c{touch-action:none!important}
 <div><input id="col" type="color" value="#c8a070"><input id="sz" type="range" min="2" max="24" value="8"><span id="pal"></span><span style="font-size:11px;opacity:.7">色:長押し保存</span></div>
 </div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
 <script type="text/plain" id="gm">
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -1418,11 +1418,16 @@ function hostLoop(){setInterval(()=>{bc({k:'S',s:SS})},100);
   else if(phh=='seek'&&(T0<=0||!Object.values(P).some(p=>p.role=='hider')))endSeek();
   else if(phh=='reveal'&&T0<=0){phh='lobby';for(const i in P)P[i].role='free';FIN={};pbc()}
   if(phh=='vote')bc({k:'V',v:VOTES});bc({k:'T',t:phh=='collect'?0:T0})},200)}
-function join(){const name=$('nm').value.trim()||('ゲスト'+(Math.random()*99|0));localStorage.mkk=name;const pid='mekkakakurenbo-main',RT=+sessionStorage.mkkT||0;
- const pe=new Peer(pid);peer=pe;
- pe.on('open',id=>{isHost=true;myId=id;pe.on('connection',c=>{conns[c.peer]=c;c.on('data',d=>onH(c.peer,d));c.on('close',()=>{delete conns[c.peer];delete P[c.peer];delete SS[c.peer];delete FIN[c.peer];pbc()})});
-  P[myId]={n:name,role:'free'};hostLoop();pbc()});
- pe.on('error',e=>{if(e.type=='unavailable-id'&&!myId){const p2=new Peer();p2.on('open',id=>{myId=id;hostConn=p2.connect(pid,{reliable:true});hostConn.on('open',()=>{sessionStorage.mkkT=0;hostConn.send({k:'join',n:name})});hostConn.on('data',onMsg);hostConn.on('close',()=>{sessionStorage.mkkRe=1;location.reload()})});p2.on('error',e=>{if(e.type=='peer-unavailable'&&RT<12){sessionStorage.mkkT=RT+1;try{p2.destroy()}catch(_){}setTimeout(join,1200+Math.random()*1000)}else alert('接続エラー:'+e.type)})}else if(e.type!='unavailable-id')alert('接続エラー:'+e.type)})}
+const WS_URL='wss://kakurenbo-server.s20240062.workers.dev/ws';
+function join(){const name=$('nm').value.trim()||('ゲスト'+(Math.random()*99|0));localStorage.mkk=name;let ok=0;
+ const ws=new WebSocket(WS_URL);peer=ws;const tx=(to,d)=>ws.readyState==1&&ws.send(JSON.stringify({to,d}));
+ ws.onmessage=ev=>{const m=JSON.parse(ev.data);
+  if(m.t=='hello'){ok=1;myId=m.id;if(m.host){isHost=true;P[myId]={n:name,role:'free'};hostLoop();pbc()}else{hostConn={open:true,send:d=>tx('host',d)};hostConn.send({k:'join',n:name})}}
+  else if(m.t=='join'){const id=m.id;conns[id]={open:true,peer:id,send:d=>tx(id,d)}}
+  else if(m.t=='leave'){const id=m.id;delete conns[id];delete P[id];delete SS[id];delete FIN[id];pbc()}
+  else if(m.t=='host'){sessionStorage.mkkRe=1;location.reload()}
+  else if(m.d!==undefined){isHost?onH(m.from,m.d):onMsg(m.d)}};
+ ws.onclose=()=>{if(ok){sessionStorage.mkkRe=1;location.reload()}else alert('サーバーに接続できません')}}
 function tp(s){me.x=s[0];me.z=s[1];me.y=0;me.vy=0;me.yaw=Math.random()*6.28;me.pit=0;me.fy=me.yaw+Math.PI}
 function clearHL(){HL.forEach(o=>sc.remove(o));HL=[]}
 function mats(){for(const i in RM)matMode(RM[i].f,P[i]&&P[i].role=='oni')}
