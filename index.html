@@ -887,7 +887,7 @@ function buildWalls(){const G={};
     if(!blocked&&it.y1-it.y0>dh+.5){sbx(v,c,sd,.035,p,q,it.y0,dh,.07,r.dadoM,r.s);sbx(v,c,sd,.06,p,q,it.y0+dh,.09,.12,r.trim);sbx(v,c,sd,.05,p,q,it.y0,.2,.1,r.trim)}
     if(r.crown!==false){sbx(v,c,sd,.08,p,q,it.y1-.3,.3,.16,r.trim);sbx(v,c,sd,.03,p,q,it.y1-.34,.05,.24,GD2)}}}}
  for(const d of DR){const v=d.v,c=d.c,a=d.a,w=d.w,tm=d.trim||WOODD,top=d.yb+d.h,P=(aa,y,bw,bh,th)=>bx(v?c:aa,y,v?aa:c,v?th:bw,bh,v?bw:th,tm,0,1.6);
-  P(a-w/2-.06,d.yb,.12,d.h+.12,.5);P(a+w/2+.06,d.yb,.12,d.h+.12,.5);P(a,top,w+.24,.14,.5);bx(v?c:a,top+.14,v?a:c,v?.58:w+.34,.07,v?w+.34:.58,GD,0);
+  P(a-w/2-.03,d.yb,.12,d.h+.09,.5);P(a+w/2+.03,d.yb,.12,d.h+.09,.5);P(a,top-.03,w+.2,.17,.52);bx(v?c:a,top+.14,v?a:c,v?.58:w+.34,.07,v?w+.34:.58,GD,0);
   if(d.t=='win'){const gb=(aa,y,bw,bh)=>bx(v?c:aa,y,v?aa:c,v?.08:bw,bh,v?bw:.08,WOODL);P(a,d.yb-.06,w+.24,.08,.56);gb(a,d.yb,w,.04);gb(a,d.yb+d.h/2-.02,w,.05);gb(a-w/4,d.yb,.05,d.h);gb(a+w/4,d.yb,.05,d.h);gb(a,d.yb,.06,d.h);
    const g=new THREE.PlaneGeometry(w,d.h);const outer=Math.abs(c)==MW||Math.abs(c)==MD;
    if(outer){const f=v?(c<0?2:3):(c<0?0:1),ox=v?(c<0?-.1:.1):0,oz=v?0:(c<0?-.1:.1);wp(v?c+ox:a,d.yb+d.h/2,v?a:c+oz,f,w,d.h,WINV)}
@@ -900,9 +900,9 @@ function buildShell(){
  // 吹き抜けの縁飾り
  for(const[x,z,w,d]of[[0,-4.12,16,.24],[0,12.12,16,.24]])bx(x,F1-.18,z,w,.3,d,GD2)}
 function rail(x0,z0,x1,z1,y,m=WOODD){const hz=Math.abs(z1-z0)<.01,L=hz?Math.abs(x1-x0):Math.abs(z1-z0),cx=(x0+x1)/2,cz=(z0+z1)/2,B_=(yy,hh,th)=>bx(cx,yy,cz,hz?L:th,hh,hz?th:L,m);B_(y+1,.07,.16);B_(y+.08,.05,.12);const n=Math.floor(L/.3);for(let i=0;i<=n;i++){const t=-L/2+i*L/n;cy(hz?cx+t:cx,y+.12,hz?cz:cz+t,.025,.88,MARB,0,.025,6)}cl(cx,y,cz,hz?L:.14,1.25,hz?.14:L,0)}
-function stairs(sx){const w=2.6,x0=sx<0?-7.8:5.2,cx=x0+w/2,n=18,ri=.3,ru=.6,zb=6.8,ix=sx<0?x0+w-.07:x0+.07;
+function stairs(sx){const w=2.6,x0=sx<0?-7.8:5.2,cx=x0+w/2,n=18,ri=.3,ru=.36,zb=-4+.36*18,ix=sx<0?x0+w-.07:x0+.07;
  for(let i=0;i<n;i++){const top=(i+1)*ri,z=zb-ru*(i+.5);bx(cx,0,z,w,top,ru,MARB);cl(cx,0,z,w,top,ru,0);bx(cx,top,z,w-.9,.025,ru-.05,RUNM);cl(ix,top,z,.12,1.1,ru,0);if(i%2==0)cy(ix,top,z,.025,1,MARB,0,.025,6)}
- const x1=ix,len=Math.hypot(ru*n,ri*n),g=new THREE.BoxGeometry(.1,.08,len);g.rotateX(Math.atan2(ri,ru));g.translate(x1+MCX,(1.3+F2+1)/2,(zb-ru*.5-4+.3)/2+MCZ);qa(g,WOODD);bx(x1,0,zb+.2,.3,1.5,.3,MARB,0);bx(x1,F2,-3.75,.3,1.5,.3,MARB,0);
+ const x1=ix,len=Math.hypot(ru*n,ri*n),g=new THREE.BoxGeometry(.1,.08,len);g.rotateX(Math.atan2(ri,ru));g.translate(x1+MCX,(1.3+F2+1)/2,(zb-ru*n/2)+MCZ);qa(g,WOODD);bx(x1,0,zb+.2,.3,1.5,.3,MARB,0);bx(x1,F2,-3.75,.3,1.5,.3,MARB,0);
  bx(cx,0,zb+.45,w,.12,.5,MARB)}
 // ---- 絵画を壁にかける ----
 const PLA={};const ASSET_T={1:['旅の記憶','作者不詳'],2:['夢の回廊','作者不詳'],3:['静かな朝','作者不詳'],4:['星の庭','作者不詳'],5:['光の肖像','作者不詳'],6:['遠い夏','作者不詳'],7:['午後の窓','作者不詳']};
@@ -920,15 +920,18 @@ function buildPic(o){NPIC++;const{f,x,y,z,w,h,mat,kind,title,artist,year,med,mer
 const TITLES=PSTY.map(s=>s[2]);
 function artInfo(si){const s=PSTY[si];return{title:pk(s[2]),artist:pk(ARTISTS),year:String(1840+ri(150)),med:s[3]}}
 // 絵画アイテム（幅つき）。a=壁に沿った位置を受けて配置する関数を返す
+function clr(r,sd,y,hb,ht){const lo=r.y0+r.dadoH+.16+hb,top=((r.ey&&r.ey[sd])?r.ey[sd][1]:r.y1)-.42-ht;
+  if(lo<=top)return[Math.max(lo,Math.min(top,y)),0];const yc=Math.min(y,top);return[yc,(yc-hb<r.y0+r.dadoH+.16)?.14:0]}
+function atC(Wr,r,sd,a,y,hb,ht){const[yc,off]=clr(r,sd,y,hb,ht),[x,yy,z]=Wr.at(a,yc),f=Wr.S.f;return[x+FN[f][0]*off,yy,z+FN[f][1]*off]}
 function IP(h,o){o=o||{};const si=o.s!=null?o.s:nextSty(),asp=o.asp||PSTY[si][1],fw=Math.max(.12,Math.min(.34,h*.085)),w=h*asp,kind=o.kind||pk(['gold','gold','gold','bronze','silver','walnut','black']);
- return{w:w+fw*2+.2,fn:(r,sd,a)=>{const Wr=wallRef(r,sd),y=r.y0+(o.y!=null?o.y:(r.hy||2.5)),[x,yy,z]=Wr.at(a,y),cv=paintCanvas(si,h>=2.6?512:384,asp),inf=artInfo(si);buildPic(Object.assign({f:Wr.S.f,x,y:yy,z,w,h,mat:new THREE.MeshBasicMaterial({map:cv.t}),kind,merge:1},inf))}}}
+ return{w:w+fw*2+.2,fn:(r,sd,a)=>{const Wr=wallRef(r,sd),y=r.y0+(o.y!=null?o.y:(r.hy||2.5)),[x,yy,z]=atC(Wr,r,sd,a,y,h/2+fw+.19,h/2+fw+.03),cv=paintCanvas(si,h>=2.6?512:384,asp),inf=artInfo(si);buildPic(Object.assign({f:Wr.S.f,x,y:yy,z,w,h,mat:new THREE.MeshBasicMaterial({map:cv.t}),kind,merge:1},inf))}}}
 function IA(n,h,o){o=o||{};const asp0=DAS[n],fw=Math.max(.12,Math.min(.34,h*.085)),kind=o.kind||'gold';
- return{w:h*asp0+fw*2+.2,fn:(r,sd,a)=>{PLA[n]=1;const Wr=wallRef(r,sd),y=r.y0+(o.y!=null?o.y:(r.hy||2.5)),[x,yy,z]=Wr.at(a,y),inf=ASSET_T[n]||['無題','作者不詳'],
+ return{w:h*asp0+fw*2+.2,fn:(r,sd,a)=>{PLA[n]=1;const Wr=wallRef(r,sd),y=r.y0+(o.y!=null?o.y:(r.hy||2.5)),[x,yy,z]=atC(Wr,r,sd,a,y,h/2+fw+.19,h/2+fw+.03),inf=ASSET_T[n]||['無題','作者不詳'],
   // 乱数を使う処理（額縁の種類・予備の絵）は読み込み完了を待たず同期で決める＝全員同じ見た目になる
   base={f:Wr.S.f,x,y:yy,z,h,kind,title:inf[0],artist:inf[1],year:'所蔵',med:'キャンバス',ts:ri(3),merge:1},fb=paintCanvas(nextSty(),448,asp0),im=new Image();
   im.onload=()=>{if(!im.width||!im.height){im.onerror();return}const t=new THREE.Texture(im);t.colorSpace=SRGB;t.anisotropy=8;t.needsUpdate=true;fb.t.dispose();buildPic(Object.assign(base,{w:h*im.width/im.height,mat:new THREE.MeshBasicMaterial({map:t})}));flushQ()};
   im.onerror=()=>{buildPic(Object.assign(base,{w:h*asp0,mat:new THREE.MeshBasicMaterial({map:fb.t})}));flushQ()};im.src='assets/'+n+'.jpeg'}}}
-function IS(m,w,h,o){o=o||{};return{w:w+.3,fn:(r,sd,a)=>{NSGN++;const Wr=wallRef(r,sd),y=r.y0+(o.y!=null?o.y:(o.hy||1.6)),[x,yy,z]=Wr.at(a,y);const nx=FN[Wr.S.f][0],nz=FN[Wr.S.f][1];wp(x+nx*.012,yy,z+nz*.012,Wr.S.f,w,h,typeof m=='string'?sgm(m):m);const sg=wp(x+nx*.004,yy-.04,z+nz*.004,Wr.S.f,w+.3,h+.3,SHAD)}}}
+function IS(m,w,h,o){o=o||{};return{w:w+.3,fn:(r,sd,a)=>{NSGN++;const Wr=wallRef(r,sd),y=r.y0+(o.y!=null?o.y:(o.hy||1.6)),[x,yy,z]=atC(Wr,r,sd,a,y,h/2+.15,h/2+.15);const nx=FN[Wr.S.f][0],nz=FN[Wr.S.f][1];wp(x+nx*.012,yy,z+nz*.012,Wr.S.f,w,h,typeof m=='string'?sgm(m):m);const sg=wp(x+nx*.004,yy-.04,z+nz*.004,Wr.S.f,w+.3,h+.3,SHAD)}}}
 function hang(r,sd,items,yc,hh){const iv=wfree(r,sd,yc,hh);let q=items.slice(),np_=0;
  for(const[p,e]of iv){const L=e-p,pick=[];let sw=0;
   for(let i=0;i<q.length;){const it=q[i];if(sw+it.w+.3*(pick.length+2)<=L){sw+=it.w;pick.push(it);q.splice(i,1)}else i++}
@@ -1021,7 +1024,7 @@ room('UE2',1,8,-4,26,7,{name:'光の間',wallM:WALL.lamp(),dadoM:BLK,dadoH:.8,tr
 room('UE3',1,8,7,26,19,{name:'図書室',wallM:WALL.damask('#17301f','#c9a24a','#204a30'),dadoM:WALL.walnut(),dadoH:1.1,trim:GD2,floorM:FLR.carpet('#1d2f5a','#3a4f8a','#c9a24a'),fs:1.6,ceilM:CEIL.coffer('#2a2218','#c9a24a'),mapc:'#c8d0f0'});
 room('US',1,-8,12,8,19,{name:'空中回廊',open:{n:1},wallM:mm(),dadoM:BLK,dadoH:1.2,trim:GD2,floorM:FLR.chk('#efe7d6','#6a1c2c'),ceilM:CEIL.coffer('#efe8d6','#c9a24a'),mapc:'#f0e0c8'});
 // ================= 出入口・窓 =================
-for(const s of[-1,1]){const X=8*s;door(1,X,-11.5,0);door(1,X,1,0,3.2,'arch');door(1,X,9,0,3.2,'arch');door(1,X,15.5,0);
+for(const s of[-1,1]){const X=8*s;door(1,X,-11.5,0);door(1,X,4.4,0,2.2,'arch');door(1,X,9,0,3.2,'arch');door(1,X,15.5,0);
  door(1,X,-11.5,1);door(1,X,15.5,1);door(1,X,1.5,1,5,'win',{sill:1.3,h:2.4});door(1,X,9.5,1,4,'win',{sill:1.3,h:2.4});
  door(0,-4,17*s,0);door(0,6,17*s,0);door(0,-13,17*s,0);door(0,-4,17*s,1);door(0,7,17*s,1);}
 door(0,-13,0,0,4,'arch');door(0,-4,0,0,5,'arch');door(0,12,0,0,8,'arch');
@@ -1032,7 +1035,7 @@ for(const[c,a,fl,w]of[[-MW,1,0,3],[-MW,12.5,0,3.5],[MW,-1.5,0,3],[MW,3,0,3],[MW,
 door(0,MD,-5.5,0,2.4,'win',{sill:1.0,h:2.6});door(0,MD,5.5,0,2.4,'win',{sill:1.0,h:2.6});
 for(const a of[-17,-4,4,17])door(0,MD,a,1,3,'win',{sill:.8,h:3.2});
 // 階段エリアは置けない
-OCC.push({fl:0,x0:-7.8,x1:-5.1,z0:-4,z1:7.5},{fl:0,x0:5.1,x1:7.8,z0:-4,z1:7.5},{fl:1,x0:-7.8,x1:-5.1,z0:-4,z1:-2.8},{fl:1,x0:5.1,x1:7.8,z0:-4,z1:-2.8});
+OCC.push({fl:0,x0:-7.8,x1:-5.1,z0:-4,z1:3.4},{fl:0,x0:5.1,x1:7.8,z0:-4,z1:3.4},{fl:1,x0:-7.8,x1:-5.1,z0:-4,z1:-2.8},{fl:1,x0:5.1,x1:7.8,z0:-4,z1:-2.8});
 buildWalls();buildShell();stairs(-1);stairs(1);rail(-5.2,-4,5.2,-4,F2);rail(-7.8,12,7.8,12,F2);
 // ================= 共通の装飾 =================
 const sideOf=(d)=>{for(const id in RM){const r=RM[id];if(r.fl!=d.fl&&!r.tall)continue;const px=d.v?d.c+1.2:d.a,pz=d.v?d.a:d.c+1.2;if(px>r.x0&&px<r.x1&&pz>r.z0&&pz<r.z1)return[r,d.v?'w':'n']}return null};
@@ -1061,7 +1064,7 @@ const R=RM;
  for(let i=0;i<5;i++)cy(0,.0,4.2,2.4-i*.18,.12*(i+1),MARB,0,2.4-i*.18-.1,28);
  giant(0,0,4.2,PI,0);
  for(const s of[-1,1]){bench(0,s*3.4,6.6,0,2,LEAB);bench(0,s*3.4,1.4,0,2,LEAB)}
- hang(r,'w',[IA(5,2.8),IP(2.4)],2.4,1.6);hang(r,'e',[IP(2.6),IP(2.4)],2.4,1.6);
+ wuse(r,'w',-4,3.5);wuse(r,'e',-4,3.5);hang(r,'w',[IA(5,2.8),IP(2.4)],2.4,1.6);hang(r,'e',[IP(2.6),IP(2.4)],2.4,1.6);
 
  for(const[x,z,k]of[[-3.6,-1.6,2],[3.6,-1.6,6],[-3.6,10.6,3],[3.6,10.6,4]])plant(0,x,z,k)}
 // ---- カフェ ----
@@ -1095,7 +1098,8 @@ const R=RM;
  [[-19,10.2],[-19,13.6],[-15,11.9],[-22,14.8],[-22,10.5]].forEach(([x,z],i)=>Pf(0,x,z,0,1.6,1.0,K=>{K.b(0,0,0,1.5,.8,.9,WOODL);K.col(0,0,0,1.5,.9,.9,.2);for(let a=0;a<6;a++)K.b(-.55+a%3*.55,.8,-.2+Math.floor(a/3)*.4,.4,.15+((a*7+i)%3)*.12,.32,lam([0xd03a2e,0x2e7ad0,0xe0b030,0x3aa05a,0xe0662a,0x8a4ab8][(a+i)%6]))}));
  for(const[x,z]of[[-23.5,6.9],[-9,12]])Pf(0,x,z,0,.6,.6,K=>{K.c(0,0,0,.28,.06,BLK,0);K.c(0,.06,0,.04,1.5,BLK,0);for(let a=0;a<8;a++)K.b(.0,.4+Math.floor(a/2)*.3,0,.7,.2,.06,lam([0xd03a2e,0x2e7ad0,0xe0b030,0x3aa05a][a%4]));K.col(0,0,0,.7,1.7,.4,.2)});
  hang(r,'s',[IS('shop',1.6,1.07,{y:3.2}),IP(1.4,{s:10})],3,.8);hang(r,'w',[IP(1.4,{s:10}),IP(1.4)],3.2,.7);plant(0,-9,18,1);
- for(let i=0;i<6;i++)if(put(0,-16.2+i*.4,10,.0,.0,0))sp(-16.2+i*.4,.75,10,.1,[RED,TEAL,MUST,PINK,NAVY,GRN[1]][i],1,6)}
+ for(let i=0;i<6;i++)if(put(0,-16.2+i*.4,10,.0,.0,0))sp(-16.2+i*.4,.75,10,.1,[RED,TEAL,MUST,PINK,NAVY,GRN[1]][i],1,6);
+  {const K=kit(-15.2,10,0,0);K.b(0,.55,0,2.6,.1,.9,WOODL);K.b(0,.65,0,2.4,.012,.7,CRM);for(const sx of[-1,1])for(const sz of[-1,1])K.b(sx*1.18,0,sz*.36,.08,.55,.08,WOODD);K.b(0,.2,0,2.3,.05,.6,WOODD);K.col(0,0,0,2.6,.7,.9,.2);OCC.push({fl:0,x0:-16.55,x1:-13.85,z0:9.5,z1:10.5})}}
 // ---- 古代文明の間 ----
 {const r=R.E1;downlights(r,3,2,2.4);
  Pf(0,21.5,-8.5,0,3.2,1.6,K=>{K.b(0,0,0,3.2,.2,1.6,STONE);K.b(0,.2,0,2.6,.7,1.0,SAND);K.b(0,.9,0,2.5,.2,.95,GD2);K.s(-.9,1.2,0,.28,GD,1.3,8);K.col(0,0,0,3.2,1.3,1.6,.25)});
@@ -1381,11 +1385,21 @@ function sync(){if(ph=='seek'&&role()=='hider'){clearTimeout(ft);ft=setTimeout((
 function pick(e){const f=RM[myId].f;f.root.visible=false;rd.render(sc,cam);const gl=rd.getContext(),b=new Uint8Array(4),x=Math.floor(e.clientX/innerWidth*gl.drawingBufferWidth),y=gl.drawingBufferHeight-1-Math.floor(e.clientY/innerHeight*gl.drawingBufferHeight);
  gl.readPixels(x,y,1,1,gl.RGBA,gl.UNSIGNED_BYTE,b);f.root.visible=true;$('col').value='#'+[b[0],b[1],b[2]].map(v=>v.toString(16).padStart(2,'0')).join('')}
 const p2=()=>{const k=Object.keys(lp);if(k.length<2)return null;const a=lp[k[0]],b=lp[k[1]];return{d:Math.hypot(a.x-b.x,a.y-b.y)||1,x:(a.x+b.x)/2,y:(a.y+b.y)/2}};
-cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);const p=lp[e.pointerId]={x:e.clientX,y:e.clientY,q:null,v:0};if(paintUI()){if(Object.keys(lp).length>=2){for(const k in lp){lp[k].v=2;lp[k].q=null}pd=p2()}else if(tool==1)pick(e);else if(tool==0)p.v=!paint(e,p)}};
-cv.onpointermove=e=>{const p=lp[e.pointerId];if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);const p=lp[e.pointerId]={x:e.clientX,y:e.clientY,q:null,v:0,pt:e.pointerType,t:performance.now()};if(paintUI()){if(Object.keys(lp).length>=2){for(const k in lp){lp[k].v=2;lp[k].q=null}pd=p2()}else if(tool==1)pick(e);else if(tool==0)p.v=!paint(e,p)}};
+cv.onpointermove=e=>{const p=lp[e.pointerId];if(!p)return;if(e.pointerType=='mouse'&&!e.buttons){delete lp[e.pointerId];pd=null;return}p.t=performance.now();const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
  if(paintUI()){const q=p2();if(q){if(pd){zm=Math.max(1,Math.min(6,zm*q.d/pd.d));const pp=CD*2*Math.tan(cam.fov*Math.PI/360)/innerHeight;PX=Math.max(-1.5,Math.min(1.5,PX-(q.x-pd.x)*pp));PY=Math.max(-1.5,Math.min(1.5,PY+(q.y-pd.y)*pp))}pd=q;return}
   if(p.v==2)return;if(tool==0){if(p.v)view(dx,dy);else{const ce=e.getCoalescedEvents?e.getCoalescedEvents():[];if(ce.length>1)for(const c of ce)paint(c,p);else paint(e,p)}}else if(tool==1)pick(e);else view(dx,dy)}else if(ph!='menu')view(dx,dy)};
-cv.onpointerup=cv.onpointercancel=e=>{const p=lp[e.pointerId];delete lp[e.pointerId];pd=null;if(p&&p.v!=2&&paintUI()&&tool==1)setTool(0);if(dirtyT&&!Object.keys(lp).length){dirtyT=0;sync()}};
+const lpUp=e=>{const p=lp[e.pointerId];delete lp[e.pointerId];pd=null;if(p&&p.v!=2&&paintUI()&&tool==1)setTool(0);if(dirtyT&&!Object.keys(lp).length){dirtyT=0;sync()}};
+ cv.onpointerup=cv.onpointercancel=lpUp;
+ // 指の記録(lp)が残って「1本指なのに2本指ピンチ扱い→勝手にズーム＆視点が動かない」になるのを防ぐ
+ // (pointerupがcanvas以外に飛んだ/キャプチャが外れた/ブラウザにジェスチャを奪われた時に記録が残るのが原因)
+ for(const ev of['pointerup','pointercancel'])addEventListener(ev,e=>{if(lp[e.pointerId])lpUp(e)},true);
+ cv.addEventListener('lostpointercapture',e=>{if(lp[e.pointerId])lpUp(e)});
+ function lpFix(){for(const k in lp)if(lp[k].v==2)lp[k].v=1}
+ function lpPrune(n){const ks=Object.keys(lp).filter(k=>lp[k].pt=='touch'),ex=ks.length-n;if(ex<=0)return;ks.sort((a,b)=>lp[a].t-lp[b].t);for(let i=0;i<ex;i++)delete lp[ks[i]];pd=null;if(Object.keys(lp).length<2)lpFix()}
+ const lpClear=()=>{for(const k in lp)delete lp[k];pd=null};
+ for(const ev of['touchstart','touchend','touchcancel'])addEventListener(ev,e=>{if(!e.touches.length)lpClear();else lpPrune(e.touches.length)},{capture:true,passive:true});
+ addEventListener('blur',lpClear);document.addEventListener('visibilitychange',lpClear);
 const J=$('joy');let jp=null;
 function jm(e){const r=J.getBoundingClientRect();let x=(e.clientX-r.left-r.width/2)/(r.width/2),y=(e.clientY-r.top-r.height/2)/(r.height/2);const l=Math.hypot(x,y);if(l>1){x/=l;y/=l}{const l2=Math.min(l,1),k=l2>0?Math.min(1,l2*SEN.s)/l2:0;jx=x*k;jy=y*k}$('knob').style.transform=`translate(${x*JD*.27}px,${y*JD*.27}px)`}
 J.onpointerdown=e=>{jp=e.pointerId;J.setPointerCapture(jp);jm(e)};J.onpointermove=e=>{if(e.pointerId==jp)jm(e)};J.onpointerup=J.onpointercancel=()=>{jp=null;jx=jy=0;$('knob').style.transform=''};
@@ -1520,7 +1534,77 @@ function taunt(lv){if(!(ph=='seek'&&role()=='hider'))return;const t=performance.
 const rkP=document.createElement('div');rkP.style.cssText='position:fixed;top:150px;left:8px;min-width:200px;background:rgba(0,0,0,.72);color:#fff;border-radius:12px;padding:10px 14px;font:14px sans-serif;z-index:25;display:none';document.body.appendChild(rkP);
 function rkShow(on){if(!on||!Object.keys(SCS).length){rkP.style.display='none';return}rkP.textContent='';const h=document.createElement('b');h.textContent='👀 見過ごしランキング';rkP.appendChild(h);
  Object.entries(SCS).sort((a,b)=>b[1]-a[1]).forEach(([id,v],i)=>{const d=document.createElement('div');d.textContent=(['🥇','🥈','🥉'][i]||(i+1)+'.')+' '+(P[id]?P[id].n:'?')+'  '+v.toFixed(1)+'pt';rkP.appendChild(d)});rkP.style.display='block'}
-function fwLaunch(x,y,z,lv){const c=FWC[Math.random()*6|0],g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3));
+
+// ---------- ミニマップ（右上・ドラッグで自由配置・ON/OFF・向きに合わせて回転・花火が上がった所を一瞬光らせる） ----------
+const MMS={on:1,x:null,y:null};try{Object.assign(MMS,JSON.parse(localStorage.mkMap||'{}')||{})}catch(e){}
+const mmSave=()=>{try{localStorage.mkMap=JSON.stringify(MMS)}catch(e){}};
+const mmSz=()=>Math.round(Math.max(96,Math.min(150,Math.min(innerWidth,innerHeight)*.34)));
+const mmEl=document.createElement('div'),mmCv=document.createElement('canvas'),mmBt=document.createElement('button');
+mmEl.id='mm';mmBt.id='mmb';mmBt.textContent='🗺';mmBt.setAttribute('aria-label','マップ ON/OFF');
+mmEl.appendChild(mmCv);document.body.appendChild(mmEl);document.body.appendChild(mmBt);
+const mmSt=document.createElement('style');mmSt.textContent=
+ '#mm{position:fixed;z-index:6;border-radius:50%;touch-action:none;cursor:grab;box-sizing:border-box;'+
+ 'background:radial-gradient(circle,rgba(120,190,255,.10),rgba(10,20,45,.34) 75%);'+
+ 'border:1.5px solid rgba(190,225,255,.55);box-shadow:0 0 14px rgba(110,180,255,.35),inset 0 0 18px rgba(120,190,255,.18);'+
+ '-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);overflow:hidden}'+
+ '#mm canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}'+
+ '#mmb{position:fixed;z-index:7;top:calc(8px + env(safe-area-inset-top));right:calc(60px + env(safe-area-inset-right));width:44px;height:44px;padding:0;margin:0;border-radius:50%;font-size:22px;background:rgba(255,255,255,.85);transition:opacity .2s}'+
+ '#mmb.off{opacity:.45;background:rgba(255,255,255,.6)}';
+document.head.appendChild(mmSt);
+function mmPlace(){const d=mmSz();mmEl.style.width=mmEl.style.height=d+'px';
+ const W=innerWidth,H=innerHeight;let x=Number.isFinite(MMS.x)?MMS.x*W:W-128-d,y=Number.isFinite(MMS.y)?MMS.y*H:54;
+ x=Math.max(4,Math.min(W-d-4,x));y=Math.max(4,Math.min(H-d-4,y));mmEl.style.left=x+'px';mmEl.style.top=y+'px';
+ const r=Math.round(d*(devicePixelRatio>1?2:1.5));if(mmCv.width!=r){mmCv.width=mmCv.height=r}}
+let mmDr=null;
+mmEl.onpointerdown=e=>{mmDr=[e.clientX-mmEl.offsetLeft,e.clientY-mmEl.offsetTop,e.pointerId];mmEl.setPointerCapture(e.pointerId);mmEl.style.cursor='grabbing';e.preventDefault()};
+mmEl.onpointermove=e=>{if(!mmDr||e.pointerId!=mmDr[2])return;const d=mmSz();
+ const x=Math.max(4,Math.min(innerWidth-d-4,e.clientX-mmDr[0])),y=Math.max(4,Math.min(innerHeight-d-4,e.clientY-mmDr[1]));
+ mmEl.style.left=x+'px';mmEl.style.top=y+'px';MMS.x=x/innerWidth;MMS.y=y/innerHeight};
+mmEl.onpointerup=mmEl.onpointercancel=()=>{if(mmDr){mmDr=null;mmEl.style.cursor='grab';mmSave()}};
+mmBt.onclick=()=>{MMS.on=MMS.on?0:1;mmSave();mmBt.classList.toggle('off',!MMS.on)};
+mmBt.classList.toggle('off',!MMS.on);
+addEventListener('resize',mmPlace);mmPlace();
+// 花火の位置表示（強さで表示時間が変わる：紙吹雪/強制=0.5秒, 花火=1.2秒, 大花火=2.5秒）
+const MMP=[],MMDUR=[0,.5,1.2,2.5];
+function mapPing(x,z,lv){if(!(lv>=1&&lv<=3))return;MMP.push({x,z,lv,t:performance.now()});if(MMP.length>24)MMP.shift()}
+let mmLast=0;
+function mapDraw(now){
+ const show=ph!='menu';mmBt.hidden=!show;const vis=show&&MMS.on;mmEl.hidden=!vis;if(!vis)return;
+ if(now-mmLast<30)return;mmLast=now;
+ const g=mmCv.getContext('2d'),S=mmCv.width,C=S/2,R=MI==0?34:MI==1?18:20,k=C*.94/R;
+ const cx=dr?dr.x:me.x,cz=dr?dr.z:me.z,cy=dr?dr.y-1.55:me.y,yw=cam.rotation.y,cs=Math.cos(yw),sn=Math.sin(yw);
+ g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,S,S);
+ // 周辺に向かって薄く消える（おしゃれ）
+ g.save();g.translate(C,C);g.rotate(yw);g.scale(k,k);g.translate(-cx,-cz);
+ g.lineJoin='round';g.lineWidth=1.3/k;g.strokeStyle='rgba(200,235,255,.8)';g.shadowColor='rgba(120,200,255,.9)';g.shadowBlur=4;
+ // 世界の端
+ g.save();g.setLineDash([3/k,3/k]);g.strokeStyle='rgba(255,255,255,.35)';g.shadowBlur=0;g.strokeRect(WB.x0,WB.z0,WB.x1-WB.x0,WB.z1-WB.z0);g.restore();
+ g.beginPath();const lo=cy+.3,hi=cy+1.6,L=R*1.5;
+ for(let i=0;i<B.length;i++){const b=B[i];if(b.c>hi||b.d<lo)continue;
+  if(b.b<cx-L||b.a>cx+L||b.f<cz-L||b.e>cz+L)continue;
+  if(b.b-b.a>200||b.f-b.e>200)continue; // 地面など巨大な板は描かない
+  g.rect(b.a,b.e,b.b-b.a,b.f-b.e)}
+ g.stroke();g.restore();
+ // 視界の扇形（上＝正面）
+ g.save();g.translate(C,C);const fr=C*.7,gr=g.createRadialGradient(0,0,0,0,0,fr);gr.addColorStop(0,'rgba(255,230,120,.38)');gr.addColorStop(1,'rgba(255,230,120,0)');
+ g.fillStyle=gr;g.beginPath();g.moveTo(0,0);g.arc(0,0,fr,-Math.PI/2-.6,-Math.PI/2+.6);g.closePath();g.fill();
+ // 自分（矢印）
+ g.shadowColor='rgba(255,220,100,.95)';g.shadowBlur=8;g.fillStyle='#ffe066';g.beginPath();const a=C*.07;g.moveTo(0,-a*1.7);g.lineTo(a*1.1,a);g.lineTo(0,a*.4);g.lineTo(-a*1.1,a);g.closePath();g.fill();g.restore();
+ // 花火ピン
+ g.save();g.globalCompositeOperation='lighter';
+ for(let i=MMP.length-1;i>=0;i--){const p=MMP[i],t=(now-p.t)/1000,du=MMDUR[p.lv];if(t>du){MMP.splice(i,1);continue}
+  const dx=p.x-cx,dz=p.z-cz;let sx=(dx*cs-dz*sn)*k,sy=(dx*sn+dz*cs)*k,len=Math.hypot(sx,sy),edge=0;const lim=C*.9;
+  if(len>lim){sx*=lim/len;sy*=lim/len;edge=1}
+  const f=Math.pow(1-t/du,.6),fl=t<.08?1:.75+.25*Math.sin(t*40),rr=C*(.16+p.lv*.07)*(1+.5*(t/du))*(edge?.7:1);
+  const col=['','255,215,90','255,140,90','255,90,200'][p.lv];
+  const gg=g.createRadialGradient(C+sx,C+sy,0,C+sx,C+sy,rr);gg.addColorStop(0,`rgba(255,255,255,${.95*f*fl})`);gg.addColorStop(.25,`rgba(${col},${.7*f*fl})`);gg.addColorStop(1,`rgba(${col},0)`);
+  g.fillStyle=gg;g.beginPath();g.arc(C+sx,C+sy,rr,0,6.2832);g.fill();
+  g.strokeStyle=`rgba(${col},${.8*f})`;g.lineWidth=Math.max(1,C*.012);g.beginPath();g.arc(C+sx,C+sy,rr*(.4+.9*(t/du)),0,6.2832);g.stroke()}
+ g.restore();
+ // 外周フェード
+ g.globalCompositeOperation='destination-in';const m=g.createRadialGradient(C,C,C*.55,C,C,C);m.addColorStop(0,'#000');m.addColorStop(1,'rgba(0,0,0,.25)');g.fillStyle=m;g.fillRect(0,0,S,S);g.globalCompositeOperation='source-over';
+}
+function fwLaunch(x,y,z,lv){mapPing(x,z,lv);const c=FWC[Math.random()*6|0],g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3));
  const o=new THREE.Points(g,new THREE.PointsMaterial({size:.5+lv*.15,color:c,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));o.frustumCulled=false;sc.add(o);
  const f={o,x,z,y0:y,y,H:MI==1?1.3+lv*.3+Math.random()*.3:MI==2?2+lv*.9+Math.random()*.3:8+lv*3+Math.random()*3,lv,c,ph:0,life:0,N:0};
  if(lv==3&&!MI){const b=new THREE.Mesh(new THREE.CylinderGeometry(.25,.25,70,8,1,true),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,side:THREE.DoubleSide}));b.position.set(x,y+35,z);sc.add(b);f.beam=b}FWS.push(f)}
@@ -1535,10 +1619,13 @@ function fwUpdate(dt){for(let i=FWS.length-1;i>=0;i--){const f=FWS[i];
   f.o.material.opacity=Math.max(0,1-f.life/2.4);if(f.beam)f.beam.material.opacity=.35*Math.max(0,1-f.life/1.6)*(.7+.3*Math.sin(f.life*20));
   if(f.life>2.4){sc.remove(f.o);f.o.geometry.dispose();if(f.beam){sc.remove(f.beam);f.beam.geometry.dispose()}FWS.splice(i,1)}}}}
 // 美術館は広いので、隠れている人から最弱の花火(lv1)を一定間隔で強制的に打ち上げる（挑発ボタンとは別・ポイントなし）
-const FFW={first:[20,30],every:[30,45]};let ffT=0;
-function forceFw(dt){if(!(MI==2&&ph=='seek'&&role()=='hider')){ffT=0;return}
- if(!ffT)ffT=FFW.first[0]+Math.random()*(FFW.first[1]-FFW.first[0]);ffT-=dt;if(ffT>0)return;
- ffT=FFW.every[0]+Math.random()*(FFW.every[1]-FFW.every[0]);const[fx,fy,fz]=fwSpot(1);fwLaunch(fx,fy,fz,1);tell({k:'fw',x:fx,y:fy,z:fz,lv:1});show('強制花火！最弱の花火が近くのどこかから上がった',1800)}
+const FFW={first:25,every:40};let ffT=0,ffS=-1;
+const ffE=document.createElement('div');ffE.style.cssText='position:fixed;top:calc(46px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:6;display:none;background:rgba(0,0,0,.6);color:#ffd23f;border-radius:999px;padding:4px 14px;font:bold 14px sans-serif;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px #000';document.body.appendChild(ffE);
+function forceFw(dt){if(!(MI==2&&ph=='seek')){ffT=0;ffS=-1;ffE.style.display='none';return}
+ if(!ffT)ffT=FFW.first;ffT-=dt;
+ {const sec=Math.max(0,Math.ceil(ffT));if(sec!=ffS){ffS=sec;ffE.textContent='🎆 強制花火まであと '+sec+' 秒';ffE.style.color=sec<=5?'#ff6a5a':'#ffd23f';ffE.style.display='block'}}
+ if(ffT>0)return;ffT=FFW.every;if(role()!='hider')return;
+ const[fx,fy,fz]=fwSpot(1);fwLaunch(fx,fy,fz,1);tell({k:'fw',x:fx,y:fy,z:fz,lv:1});show('強制花火！最弱の花火が近くのどこかから上がった',1800)}
 const _qo=new THREE.Quaternion(),_eo=new THREE.Euler(),_v1=new THREE.Vector3(),_v2=new THREE.Vector3();
 function oversight(dt){if(!(ph=='seek'&&role()=='hider')){stillT=0;return}
  const sp=Math.hypot(me.x-lx,me.z-lz)/Math.max(dt,.001);lx=me.x;lz=me.z;if(sp<.3)stillT+=dt;else stillT=0;
@@ -1583,7 +1670,7 @@ gun.visible=ph=='seek'&&role()=='oni';
   else{cam.position.set(me.x,me.y+1.55*HS,me.z);pushEye(cam.position);cam.rotation.set(me.pit,me.yaw,0)}
  {const pu=paintUI(),zz=pu?zm:1,fv=2*Math.atan(Math.tan(35*Math.PI/180)/zz)*180/Math.PI;if(Math.abs(cam.fov-fv)>.001){cam.fov=fv;cam.updateProjectionMatrix()}
   if(pu&&(PX||PY)&&(studio()||tps()))cam.position.add(_pv.set(PX,PY,0).applyQuaternion(cam.quaternion))}
- oversight(dt);forceFw(dt);fwUpdate(dt);if(MI==1){const t=performance.now();FLK.color.setScalar(Math.sin(t/83)*Math.sin(t/31)>-.25?1:.12)}ptE.textContent='👀 '+myPts.toFixed(1)+'pt';
+ oversight(dt);forceFw(dt);fwUpdate(dt);mapDraw(now);if(MI==1){const t=performance.now();FLK.color.setScalar(Math.sin(t/83)*Math.sin(t/31)>-.25?1:.12)}ptE.textContent='👀 '+myPts.toFixed(1)+'pt';
   {const tt=now/1000;FOUNT.forEach((m,i)=>m.scale.y=1+.07*Math.sin(tt*5+i));CLD.forEach(c=>{c.position.x+=dt*.6;if(c.position.x>190)c.position.x=-190})}setTL(Date.now()/1000);rd.render(sc,cam)}
 requestAnimationFrame(loop);
 </script><script>
