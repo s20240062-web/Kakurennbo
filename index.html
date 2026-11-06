@@ -1739,14 +1739,21 @@ function fwUpdate(dt){for(let i=FWS.length-1;i>=0;i--){const f=FWS[i];
  else{f.life+=dt;const p=f.o.geometry.attributes.position,v=f.vel,gr=[0,3.5,4,4.5][f.lv];for(let k=0;k<f.N;k++){v[k*3+1]-=gr*dt;p.setXYZ(k,p.getX(k)+v[k*3]*dt,p.getY(k)+v[k*3+1]*dt,p.getZ(k)+v[k*3+2]*dt)}p.needsUpdate=true;
   f.o.material.opacity=Math.max(0,1-f.life/2.4);if(f.beam)f.beam.material.opacity=.35*Math.max(0,1-f.life/1.6)*(.7+.3*Math.sin(f.life*20));
   if(f.life>2.4){sc.remove(f.o);f.o.geometry.dispose();if(f.beam){sc.remove(f.beam);f.beam.geometry.dispose()}FWS.splice(i,1)}}}}
-// 美術館は広いので、隠れている人から最弱の花火(lv1)を一定間隔で強制的に打ち上げる（挑発ボタンとは別・ポイントなし）
-const FFW={first:25,every:40};let ffT=0,ffS=-1;
+// 全マップ共通：隠れている人から強制的に花火を打ち上げる（挑発ボタンとは別・ポイントなし）
+// 通常は小花火(lv1)、残り100秒を切ったら中花火(lv2)、ラスト(残り約10秒)の1発だけ大花火(lv3)
+// 「残り時間(tm)」と各自のタイマーで動くので、隠れている人が最後の1人になっても止まらない
+const FFW={first:25,every:40,mid:100,last:10};let ffT=0,ffS=-1,ffEl=0,ffLast=0;
 const ffE=document.createElement('div');ffE.style.cssText='position:fixed;top:calc(46px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:6;display:none;background:rgba(0,0,0,.6);color:#ffd23f;border-radius:999px;padding:4px 14px;font:bold 14px sans-serif;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px #000';document.body.appendChild(ffE);
-function forceFw(dt){if(!(MI==2&&ph=='seek')){ffT=0;ffS=-1;ffE.style.display='none';return}
- if(!ffT)ffT=FFW.first;ffT-=dt;
- {const sec=Math.max(0,Math.ceil(ffT));if(sec!=ffS){ffS=sec;ffE.textContent='🎆 強制花火まであと '+sec+' 秒';ffE.style.color=sec<=5?'#ff6a5a':'#ffd23f';ffE.style.display='block'}}
- if(ffT>0)return;ffT=FFW.every;if(role()!='hider')return;
- const[fx,fy,fz]=fwSpot(1);fwLaunch(fx,fy,fz,1);tell({k:'fw',x:fx,y:fy,z:fz,lv:1});show('強制花火！最弱の花火が近くのどこかから上がった',1800)}
+function forceFw(dt){if(ph!='seek'){ffT=0;ffS=-1;ffEl=0;ffLast=0;ffE.style.display='none';return}
+ ffEl+=dt;if(!ffT)ffT=FFW.first;ffT-=dt;
+ // ラスト大花火までの秒数（tmが古い値の間は無効）
+ const finIn=ffEl>5?tm-FFW.last:1e9,isLast=!ffLast&&finIn<=ffT&&finIn<1e8,nextIn=ffLast?1e9:(isLast?finIn:ffT);
+ if(ffLast||nextIn>1e8){ffE.style.display='none'}
+ else{const sec=Math.max(0,Math.ceil(nextIn)),lvN=isLast?3:(tm<=FFW.mid?2:1),key=sec+'/'+lvN;if(key!=ffS){ffS=key;ffE.textContent=(lvN==3?'🎇 ラスト大花火まであと ':lvN==2?'🎆 中花火まであと ':'🎆 強制花火まであと ')+sec+' 秒';ffE.style.color=sec<=5?'#ff6a5a':'#ffd23f';ffE.style.display='block'}}
+ if(isLast?finIn>0:ffT>0)return;
+ const lv=isLast?3:(tm<=FFW.mid?2:1);if(isLast)ffLast=1;else ffT=FFW.every;if(role()!='hider')return;
+ if(!isLast&&tm<=FFW.last+3)return;
+ const[fx,fy,fz]=fwSpot(lv);fwLaunch(fx,fy,fz,lv);tell({k:'fw',x:fx,y:fy,z:fz,lv});show(['','強制花火！小さな花火が近くのどこかから上がった','強制花火！中花火が近くのどこかから上がった','ラスト強制花火！大花火が上がった'][lv],1800)}
 const _qo=new THREE.Quaternion(),_eo=new THREE.Euler(),_v1=new THREE.Vector3(),_v2=new THREE.Vector3();
 function oversight(dt){if(!(ph=='seek'&&role()=='hider')){stillT=0;return}
  const sp=Math.hypot(me.x-lx,me.z-lz)/Math.max(dt,.001);lx=me.x;lz=me.z;if(sp<.3)stillT+=dt;else stillT=0;
