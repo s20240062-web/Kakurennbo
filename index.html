@@ -1776,6 +1776,19 @@ function fwUpdate(dt){for(let i=FWS.length-1;i>=0;i--){const f=FWS[i];
 // 通常は小花火(lv1)、残り100秒を切ったら中花火(lv2)、ラスト(残り約10秒)の1発だけ大花火(lv3)
 // 「残り時間(tm)」と各自のタイマーで動くので、隠れている人が最後の1人になっても止まらない
 const FFW={first:25,every:40,mid:100,last:10};let ffT=0,ffS=-1,ffEl=0,ffLast=0;
+// 美術館だけ：残り100秒の瞬間から5秒間、残り10秒から最後まで、全員(隠れる側も鬼も)が発光して位置が分かる
+const GLW={on:0,xray:1};
+const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.35,'rgba(255,255,255,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t})();
+function glowFx(dt){
+ const want=MI==2&&ph=='seek'&&ffEl>5&&((tm<=100&&tm>95)||(tm<=10&&tm>0));
+ if(want&&!GLW.on)show(tm>50?'✨ 全員が5秒間発光！':'✨ ラスト10秒：全員発光！',2200);
+ GLW.on=want?1:0;const t=performance.now()/1000;
+ for(const id in RM){const f=RM[id].f;if(!f||!f.mesh)continue;const u=f.mesh.userData,oni=P[id]&&P[id].role=='oni';
+  if(!f.halo){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,transparent:true,depthWrite:false,depthTest:!GLW.xray,blending:THREE.AdditiveBlending,fog:false}));sp.renderOrder=999;sp.position.y=.9;sp.visible=false;f.root.add(sp);f.halo=sp}
+  const h=f.halo,rs=f.root.scale.x||1;
+  if(want){const k=.75+.25*Math.sin(t*14);h.visible=true;h.material.color.set(oni?0xff5a3c:0xffe066);h.material.opacity=.95*k;h.scale.setScalar(3.4/rs);
+   u.b.color.setScalar(2.2);u.l.emissive.setScalar(.7*k)}
+  else if(h.visible){h.visible=false;u.b.color.setScalar(1);u.l.emissive.setScalar(0)}}}
 const ffE=document.createElement('div');ffE.style.cssText='position:fixed;top:calc(46px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:6;display:none;background:rgba(0,0,0,.6);color:#ffd23f;border-radius:999px;padding:4px 14px;font:bold 14px sans-serif;white-space:nowrap;pointer-events:none;text-shadow:0 1px 2px #000';document.body.appendChild(ffE);
 function forceFw(dt){if(ph!='seek'){ffT=0;ffS=-1;ffEl=0;ffLast=0;ffE.style.display='none';return}
  ffEl+=dt;if(!ffT)ffT=FFW.first;ffT-=dt;
@@ -1833,7 +1846,7 @@ gun.visible=ph=='seek'&&role()=='oni';
   else{cam.position.set(me.x,me.y+1.55*HS,me.z);pushEye(cam.position);cam.rotation.set(me.pit,me.yaw,0)}
  {const pu=paintUI(),zz=pu?zm:1,fv=2*Math.atan(Math.tan(35*Math.PI/180)/zz)*180/Math.PI;if(Math.abs(cam.fov-fv)>.001){cam.fov=fv;cam.updateProjectionMatrix()}
   if(pu&&(PX||PY)&&(studio()||tps()))cam.position.add(_pv.set(PX,PY,0).applyQuaternion(cam.quaternion))}
- oversight(dt);forceFw(dt);fwUpdate(dt);mapDraw(now);if(MI==1){const t=performance.now();FLK.color.setScalar(Math.sin(t/83)*Math.sin(t/31)>-.25?1:.12)}ptE.textContent='👀 '+myPts.toFixed(1)+'pt';
+ oversight(dt);forceFw(dt);glowFx(dt);fwUpdate(dt);mapDraw(now);if(MI==1){const t=performance.now();FLK.color.setScalar(Math.sin(t/83)*Math.sin(t/31)>-.25?1:.12)}ptE.textContent='👀 '+myPts.toFixed(1)+'pt';
   {const tt=now/1000;FOUNT.forEach((m,i)=>m.scale.y=1+.07*Math.sin(tt*5+i));CLD.forEach(c=>{c.position.x+=dt*.6;if(c.position.x>190)c.position.x=-190})}setTL(Date.now()/1000);rd.render(sc,cam)}
 requestAnimationFrame(loop);
 </script><script>
