@@ -412,7 +412,7 @@ const exitM=new THREE.MeshBasicMaterial({map:T2(128,48,g=>{g.fillStyle='#1b8a3a'
 const mirM=new THREE.MeshPhongMaterial({color:0xcfe4ee,shininess:150,specular:0xffffff});
 const stM=[0xa33a2a,0x2a5ea3,0x3a8a4a].map(h=>L(h));
 // ---- 壁・柱 ----
-const WP=[],ROOMS=[];
+const WP=[],ROOMS=[];window.BKRM=ROOMS;
 function wseg(vert,c,a0,a1,y0,y1,m){if(a1-a0<.05)return;const T=.3,len=a1-a0,mid=(a0+a1)/2,w=vert?T:len,d=vert?len:T,x=vert?c:mid,z=vert?mid:c;
  const g=new THREE.BoxGeometry(w,y1-y0,d);g.translate(x+BCX,(y0+y1)/2,z+BCZ);wuv(g,3.2);qa(g,m);
  const o={a:x+BCX-w/2,b:x+BCX+w/2,c:y0,d:y1,e:z+BCZ-d/2,f:z+BCZ+d/2,i:.1};if(y0>0)o.nc=1;B.push(o);
@@ -807,7 +807,7 @@ const kit=(x,z,ry=0,y0=0)=>{const cs=Math.cos(ry),sn=Math.sin(ry),P=(ox,oz)=>[x+
  p:(ox,cy_,oz,w,h,m,ang=0,uvr)=>{const[px,pz]=P(ox,oz),g=new THREE.PlaneGeometry(w,h);if(uvr){const t=g.attributes.uv;for(let k=0;k<t.count;k++)t.setXY(k,uvr[0]+(uvr[2]-uvr[0])*t.getX(k),uvr[1]+(uvr[3]-uvr[1])*t.getY(k))}g.rotateY(ry+ang);g.translate(px+MCX,y0+cy_,pz+MCZ);qa(g,m)},
  col:(ox,oz,y,w,h,d,i)=>{const[px,pz]=P(ox,oz);colr(px,pz,y0+y,w,h,d,i)}};return K};
 // ---- 占有管理（出入口をふさがない） ----
-const RM={},DR=[],OCC=[],KEEP=[];
+const RM={},DR=[],OCC=[],KEEP=[];window.MURM=RM;
 function room(id,fl,x0,z0,x1,z1,o){const y0=fl?F2:0,y1=o.tall||fl?MH:F1;RM[id]=Object.assign({id,fl,x0,z0,x1,z1,y0,y1,s:2.4,dadoH:1.1,fs:2.4},o);return RM[id]}
 function door(v,c,a,fl,w=2.6,t='door',o){const yb=t=='win'?(o&&o.sill!=null?o.sill:1.1):0,h=t=='win'?(o&&o.h||2.2):(t=='arch'?4:3.4);const d=Object.assign({v,c,a,fl,w,t,yb:yb+(fl&&t!='win'?F2:fl?F2:0),h},o||{});DR.push(d);
  if(t!='win'){const p=v?[c-1.9,c+1.9,a-w/2-.3,a+w/2+.3]:[a-w/2-.3,a+w/2+.3,c-1.9,c+1.9];KEEP.push({fl,x0:p[0],x1:p[1],z0:p[2],z1:p[3]})}return d}
@@ -1301,7 +1301,7 @@ function sendChat(){const i=$('ci'),t=i.value.trim();if(!t)return;i.value='';tel
 $('cs').onclick=sendChat;$('ci').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();sendChat()}};
 const PN={lobby:'待機中',vote:'マップ投票',pick:'鬼決め',paint:'ペイント',seek:'探索',reveal:'答え合わせ'};
 function ui(){const w=walk(),pu=paintUI();tnP.style.display=(ph=='seek'&&role()=='hider')?'flex':'none';$('joy').hidden=!(w||dr);$('pnt').hidden=!pu;$('bj').hidden=!w;$('bs').hidden=!(ph=='seek'&&role()=='oni');
- $('bl').hidden=!(ph=='paint'&&role()=='hider');$('bl').textContent=locked?'解除して\n動く':'ここに\n固定';$('bdr').hidden=!drOK();$('bdr').textContent=dr?'🏠\n戻る':'🛸\nドローン';$('chat').hidden=ph=='menu';{const ab=$('avb');if(ab)ab.textContent='🧍アバター'+((P[myId]&&P[myId].av)?'B':'A')}$('pb').hidden=role()=='oni';if(!$('pw').hidden&&!(pu&&role()!='oni'))pwClose();$('menu').hidden=ph!='menu';{const gs=ph=='menu'||ph=='lobby';$('gear').hidden=!gs;if(!gs&&ED)edClose(1)}
+ $('bl').hidden=!(ph=='paint'&&role()=='hider');$('bl').textContent=locked?'解除して\n動く':'ここに\n固定';$('bdr').hidden=!drOK();$('bdr').textContent=dr?'🏠\n戻る':'🛸\nドローン';if(typeof foUp=='function')foUp();$('chat').hidden=ph=='menu';{const ab=$('avb');if(ab)ab.textContent='🧍アバター'+((P[myId]&&P[myId].av)?'B':'A')}$('pb').hidden=role()=='oni';if(!$('pw').hidden&&!(pu&&role()!='oni'))pwClose();$('menu').hidden=ph!='menu';{const gs=ph=='menu'||ph=='lobby';$('gear').hidden=!gs;if(!gs&&ED)edClose(1)}
  $('ch').hidden=!(w||(ph=='seek'&&role()=='oni'));$('lobby').hidden=ph!='lobby';layBtn();dbgUI()
  if(ph=='lobby'){$('pl').innerHTML='<b>参加者</b><br>'+Object.values(P).map(p=>p.n).join('<br>');$('st').hidden=!isHost;$('lw').textContent=isHost?(Object.keys(P).length<2?'2人以上で開始できます':''):'ホストの開始を待っています…'}hud()}
 const SK=c=>`<svg width="12" height="22" viewBox="0 0 12 22" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="4" r="2.6"/><path d="M6 7v8M2 10l4-1.5 4 1.5M6 15l-3.5 6M6 15l3.5 6"/></svg>`;
@@ -1517,6 +1517,17 @@ J.onpointerdown=e=>{jp=e.pointerId;J.setPointerCapture(jp);jm(e)};J.onpointermov
 let jump=0;$('bj').onpointerdown=()=>jump=1;$('bu').onpointerdown=()=>up=1;$('bd').onpointerdown=()=>dn=1;for(const k of['bu','bd'])$(k).onpointerup=$(k).onpointercancel=$(k).onpointerleave=()=>{up=dn=0};
 $('bl').onclick=()=>{if(locked){locked=0;dr=null}else doLock();ui()};
 $('bdr').onclick=()=>{if(dr)dr=null;else if(drOK()){dr={x:cam.position.x,y:cam.position.y,z:cam.position.z,yaw:cam.rotation.y,pit:cam.rotation.x};show('🛸ドローン視点：ボタンで元の場所に戻れます',2200)}ui()};
+// ドローン中に鬼へ追従して様子を見るボタン（タップで 鬼1→鬼2→…→追従解除 と切り替え。追従中は画面ドラッグで鬼の周りを回れる）
+var foB=document.createElement('button');
+foB.style.cssText='position:fixed;top:calc(96px + env(safe-area-inset-top));left:8px;z-index:7;display:none;background:rgba(0,0,0,.6);color:#fff;border:2px solid #fff9;border-radius:999px;padding:8px 14px;font:bold 14px sans-serif;touch-action:manipulation;-webkit-tap-highlight-color:transparent';document.body.appendChild(foB);
+function foList(){return Object.keys(P).filter(i=>i!=myId&&P[i].role=='oni'&&RM[i]&&RM[i].s)}
+function foUp(){foB.style.display=(dr&&ph!='lobby'&&ph!='menu')?'block':'none';if(!dr)return;foB.textContent=dr.fl&&P[dr.fl]?'👹追従中：'+P[dr.fl].n+'（タップで次／解除）':'👹 鬼を追従';foB.style.background=dr.fl?'#e53935':'rgba(0,0,0,.6)'}
+foB.onclick=e=>{e.stopPropagation();if(!dr)return;const l=foList();if(!l.length){show('追従できる鬼がいません',1500);return}
+ const n=dr.fl?l.indexOf(dr.fl)+1:0;
+ if(n>=l.length){dr.fl=null;show('追従をやめました',1200)}
+ else{dr.fl=l[n];const o=RM[dr.fl].s,dx=o[0]-dr.x,dy=o[1]+1.2-dr.y,dz=o[2]-dr.z;dr.yaw=Math.atan2(-dx,-dz);dr.pit=Math.max(-1.2,Math.min(1.2,Math.atan2(dy,Math.hypot(dx,dz))));show('👹 '+(P[dr.fl]?P[dr.fl].n:'鬼')+' を追従中（ドラッグで回り込めます）',2000)}
+ foUp()};
+
 $('bs').onpointerdown=shoot;
 
 // ---------- 操作配置・感度設定（移動スティック/撃つ/ジャンプ） ----------
@@ -1636,10 +1647,25 @@ function tnSet(v){tn=v;tb.forEach((x,j)=>x.style.background=tn==j+1?'#e53935':'r
  b.onclick=()=>taunt(i+1);tnP.appendChild(b);tb.push(b)});document.body.appendChild(tnP);
 let tnCD=0,tnUntil=0;
 // 花火は本人の足元ではなく「近くのどこか」から上がる。派手(大)なほどズレ幅が小さく＝居場所がバレやすい
-const FWR=[0,20,13,7.5];
-function fwSpot(lv){const sc_=MI==0?1:MI==1?.55:.6,R=FWR[lv]*sc_;let bx=me.x,bz=me.z;
+const FWR=[0,16,10.5,6];
+// 屋内マップ(Backrooms/美術館)の部屋の矩形（世界座標）。yは今いる階の高さ。美術館は階ごとに別の部屋として扱う
+function fwRects(y){const o=[];
+ if(MI==1&&window.BKRM){for(const r of BKRM)o.push({x0:r.x0+BCX,x1:r.x1+BCX,z0:r.z0+BCZ,z1:r.z1+BCZ,y0:0,y1:BH})}
+ else if(MI==2&&window.MURM){for(const k in MURM){const r=MURM[k];if(y+.9<r.y0-.2||y+.9>r.y1)continue;o.push({x0:r.x0+MCX,x1:r.x1+MCX,z0:r.z0+MCZ,z1:r.z1+MCZ,y0:r.y0,y1:r.y1})}}
+ return o}
+// 花火は本人の足元ではなく「近くのどこか」から上がる。派手(大)なほどズレ幅が小さい。
+// 屋内では必ず「隠れている人がいる部屋・同じ階」から上がる。部屋の境目にいるときは境目の近く(4m以内)で上がる
+function fwSpot(lv){const sc_=MI==0?1:MI==1?.55:.6,R=FWR[lv]*sc_;
+ if(MI){const all=fwRects(me.y),mine=all.filter(q=>me.x>q.x0-.9&&me.x<q.x1+.9&&me.z>q.z0-.9&&me.z<q.z1+.9),edge=mine.length>1,RR=edge?Math.min(R,4):R,ins=.8;
+  const okp=(x,z)=>{if(x<WB.x0+.8||x>WB.x1-.8||z<WB.z0+.8||z>WB.z1-.8)return 0;if(inB(x,me.y+.5,z,.25))return 0;
+   if(mine.length)return mine.some(q=>x>q.x0+ins&&x<q.x1-ins&&z>q.z0+ins&&z<q.z1-ins);
+   return!all.some(q=>x>q.x0-.2&&x<q.x1+.2&&z>q.z0-.2&&z<q.z1+.2)};
+  for(let n=0;n<60;n++){const a=Math.random()*6.2832,r=RR*(edge?Math.sqrt(Math.random()):.3+.7*Math.sqrt(Math.random())),x=me.x+Math.cos(a)*r,z=me.z+Math.sin(a)*r;if(okp(x,z))return[x,me.y,z]}
+  for(let n=0;n<30;n++){const a=Math.random()*6.2832,r=.8+Math.random()*1.7,x=me.x+Math.cos(a)*r,z=me.z+Math.sin(a)*r;if(okp(x,z))return[x,me.y,z]}
+  return[me.x,me.y,me.z]}
+ let bx=me.x,bz=me.z;
  for(let n=0;n<14;n++){const a=Math.random()*6.2832,r=R*(.3+.7*Math.sqrt(Math.random())),x=Math.max(WB.x0+.8,Math.min(WB.x1-.8,me.x+Math.cos(a)*r)),z=Math.max(WB.z0+.8,Math.min(WB.z1-.8,me.z+Math.sin(a)*r));bx=x;bz=z;if(!inB(x,me.y+.5,z,.25))break}
- return[bx,MI==0?gh(bx,bz):me.y,bz]}
+ return[bx,gh(bx,bz),bz]}
 function taunt(lv){if(!(ph=='seek'&&role()=='hider'))return;const t=performance.now();if(t<tnCD)return;tnCD=t+[0,1000,1300,1800][lv];tnUntil=t+4000;
  const[fx,fy,fz]=fwSpot(lv);fwLaunch(fx,fy,fz,lv);myPts+=[0,1,3,8][lv];tell({k:'fw',x:fx,y:fy,z:fz,lv});
  const b=tb[lv-1];b.style.background='#e53935';setTimeout(()=>b.style.background='rgba(0,0,0,.55)',250);show('挑発！近くのどこかから上がる（大きいほど場所がバレやすい＆高得点）',1800)}
@@ -1683,7 +1709,7 @@ mmBt.classList.toggle('off',!MMS.on);
 addEventListener('resize',mmPlace);mmPlace();
 // 花火の位置表示（どの花火も0.5秒だけ光る）
 const MMP=[],MMDUR=[0,.5,.5,.5];
-function mapPing(x,z,lv){if(!(lv>=1&&lv<=3))return;MMP.push({x,z,lv,t:performance.now()});if(MMP.length>24)MMP.shift()}
+function mapPing(x,z,lv,y){if(!(lv>=1&&lv<=3))return;MMP.push({x,z,y:y||0,lv,t:performance.now()});if(MMP.length>24)MMP.shift()}
 let mmLast=0;
 function mapDraw(now){
  const show=ph!='menu'&&ph!='vote'&&ph!='pick';mmBt.hidden=!show;const vis=show&&MMS.on;mmEl.hidden=!vis;if(!vis)return;
@@ -1716,18 +1742,22 @@ function mapDraw(now){
  for(let i=MMP.length-1;i>=0;i--){const p=MMP[i],t=(now-p.t)/1000,du=MMDUR[p.lv];if(t>du){MMP.splice(i,1);continue}
   const dx=p.x-cx,dz=p.z-cz;let sx=(dx*cs-dz*sn)*k,sy=(dx*sn+dz*cs)*k,len=Math.hypot(sx,sy),edge=0;const lim=C*.9;
   if(len>lim){sx*=lim/len;sy*=lim/len;edge=1}
-  const f=Math.pow(1-t/du,.6),fl=t<.08?1:.75+.25*Math.sin(t*40),rr=C*(.16+p.lv*.07)*(1+.5*(t/du))*(edge?.7:1);
-  const col=['','255,215,90','255,140,90','255,90,200'][p.lv];
-  const gg=g.createRadialGradient(C+sx,C+sy,0,C+sx,C+sy,rr);gg.addColorStop(0,`rgba(255,255,255,${.95*f*fl})`);gg.addColorStop(.25,`rgba(${col},${.7*f*fl})`);gg.addColorStop(1,`rgba(${col},0)`);
+  let ff=1;const f=Math.pow(1-t/du,.6),fl=t<.08?1:.75+.25*Math.sin(t*40),rr=C*(.16+p.lv*.07)*(1+.5*(t/du))*(edge?.7:1);
+  const col=['','255,215,90','255,140,90','255,90,200'][p.lv],dF=MI==2?((p.y>=F1+.1?1:0)-(cy>=F1+.1?1:0)):0;if(dF)ff*=.45;
+  const gg=g.createRadialGradient(C+sx,C+sy,0,C+sx,C+sy,rr);gg.addColorStop(0,`rgba(255,255,255,${.95*f*fl*ff})`);gg.addColorStop(.25,`rgba(${col},${.7*f*fl*ff})`);gg.addColorStop(1,`rgba(${col},0)`);
   g.fillStyle=gg;g.beginPath();g.arc(C+sx,C+sy,rr,0,6.2832);g.fill();
-  g.strokeStyle=`rgba(${col},${.8*f})`;g.lineWidth=Math.max(1,C*.012);g.beginPath();g.arc(C+sx,C+sy,rr*(.4+.9*(t/du)),0,6.2832);g.stroke()}
+  g.strokeStyle=`rgba(${col},${.8*f*ff})`;g.lineWidth=Math.max(1,C*.012);g.beginPath();g.arc(C+sx,C+sy,rr*(.4+.9*(t/du)),0,6.2832);g.stroke();
+  if(dF){g.fillStyle=`rgba(255,255,255,${.9*f})`;g.font='bold '+Math.round(C*.2)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(dF>0?'▲':'▼',C+sx,C+sy)}}
  g.restore();
  // 外周フェード
  g.globalCompositeOperation='destination-in';const m=g.createRadialGradient(C,C,C*.55,C,C,C);m.addColorStop(0,'#000');m.addColorStop(1,'rgba(0,0,0,.25)');g.fillStyle=m;g.fillRect(0,0,S,S);g.globalCompositeOperation='source-over';
 }
-function fwLaunch(x,y,z,lv){mapPing(x,z,lv);const c=FWC[Math.random()*6|0],g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3));
+function fwLaunch(x,y,z,lv){mapPing(x,z,lv,y);const c=FWC[Math.random()*6|0],g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3));
  const o=new THREE.Points(g,new THREE.PointsMaterial({size:.5+lv*.15,color:c,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}));o.frustumCulled=false;sc.add(o);
  const f={o,x,z,y0:y,y,H:MI==1?1.3+lv*.3+Math.random()*.3:MI==2?2+lv*.9+Math.random()*.3:8+lv*3+Math.random()*3,lv,c,ph:0,life:0,N:0};
+ if(MI){const rs=fwRects(y).filter(q=>x>q.x0&&x<q.x1&&z>q.z0&&z<q.z1);let rm=null;for(const q of rs)if(!rm||q.y1-q.y0<rm.y1-rm.y0)rm=q;f.rm=rm;
+  // 花火が別の階・別の部屋に見えないよう、打ち上げた階の天井と部屋の壁の内側に閉じ込める
+  f.ymin=y-.05;f.ymax=MI==1?BH-.15:(y<F1-.5?Math.min(rm?rm.y1:F1,F1-.2):(rm?rm.y1:MH)-.15);f.H=Math.max(.8,Math.min(f.H,f.ymax-y-.5))}
  if(lv==3&&!MI){const b=new THREE.Mesh(new THREE.CylinderGeometry(.25,.25,70,8,1,true),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,side:THREE.DoubleSide}));b.position.set(x,y+35,z);sc.add(b);f.beam=b}FWS.push(f)}
 function fwBurst(f){const N=[0,70,150,320][f.lv],pos=new Float32Array(N*3),col=new Float32Array(N*3),vel=new Float32Array(N*3),cc=new THREE.Color();
  for(let i=0;i<N;i++){const th=Math.acos(2*Math.random()-1),ph2=Math.random()*6.283,sp=[0,3,6,9][f.lv]*(.6+.4*Math.random());pos[i*3]=f.x;pos[i*3+1]=f.y;pos[i*3+2]=f.z;vel[i*3]=Math.sin(th)*Math.cos(ph2)*sp;vel[i*3+1]=Math.cos(th)*sp;vel[i*3+2]=Math.sin(th)*Math.sin(ph2)*sp;
@@ -1736,7 +1766,10 @@ function fwBurst(f){const N=[0,70,150,320][f.lv],pos=new Float32Array(N*3),col=n
  const m=f.o.material;m.vertexColors=true;m.color.set(0xffffff);m.size=[0,.3,.45,.7][f.lv];m.needsUpdate=true;f.N=N;f.vel=vel}
 function fwUpdate(dt){for(let i=FWS.length-1;i>=0;i--){const f=FWS[i];
  if(f.ph==0){f.y+=16*dt;const p=f.o.geometry.attributes.position;for(let k=0;k<8;k++)p.setXYZ(k,f.x,f.y-k*.35,f.z);p.needsUpdate=true;if(f.y-f.y0>=f.H){fwBurst(f);f.ph=1}}
- else{f.life+=dt;const p=f.o.geometry.attributes.position,v=f.vel,gr=[0,3.5,4,4.5][f.lv];for(let k=0;k<f.N;k++){v[k*3+1]-=gr*dt;p.setXYZ(k,p.getX(k)+v[k*3]*dt,p.getY(k)+v[k*3+1]*dt,p.getZ(k)+v[k*3+2]*dt)}p.needsUpdate=true;
+ else{f.life+=dt;const p=f.o.geometry.attributes.position,v=f.vel,gr=[0,3.5,4,4.5][f.lv];for(let k=0;k<f.N;k++){v[k*3+1]-=gr*dt;let nx=p.getX(k)+v[k*3]*dt,ny=p.getY(k)+v[k*3+1]*dt,nz=p.getZ(k)+v[k*3+2]*dt;
+   if(f.ymax!=null){const q=f.rm;if(q){if(nx<q.x0+.15){nx=q.x0+.15;v[k*3]=0}else if(nx>q.x1-.15){nx=q.x1-.15;v[k*3]=0}if(nz<q.z0+.15){nz=q.z0+.15;v[k*3+2]=0}else if(nz>q.z1-.15){nz=q.z1-.15;v[k*3+2]=0}}
+    if(ny<f.ymin){ny=f.ymin;v[k*3]*=.5;v[k*3+1]=0;v[k*3+2]*=.5}else if(ny>f.ymax){ny=f.ymax;v[k*3+1]=0}}
+   p.setXYZ(k,nx,ny,nz)}p.needsUpdate=true;
   f.o.material.opacity=Math.max(0,1-f.life/2.4);if(f.beam)f.beam.material.opacity=.35*Math.max(0,1-f.life/1.6)*(.7+.3*Math.sin(f.life*20));
   if(f.life>2.4){sc.remove(f.o);f.o.geometry.dispose();if(f.beam){sc.remove(f.beam);f.beam.geometry.dispose()}FWS.splice(i,1)}}}}
 // 全マップ共通：隠れている人から強制的に花火を打ち上げる（挑発ボタンとは別・ポイントなし）
@@ -1788,7 +1821,9 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/
  HL.forEach(o=>{const u=o.userData,p=u.id==myId?[me.x,me.y,me.z]:(RM[u.id]&&RM[u.id].s);const hs=P[u.id]&&P[u.id].role=='hider'?.5:1;o.scale.setScalar(hs);if(p)o.position.set(p[0],p[1]+u.h*hs,p[2]);o.material.opacity=u.o*(.6+.4*Math.sin(now/200))});
  for(const id in BX)if(!RM[id]){sc.remove(BX[id]);delete BX[id]}
   for(const id in RM){const r=RM[id],on=ph=='seek'&&role()=='oni'&&P[id]&&P[id].role=='hider'&&r.s&&r.s[6];let m=BX[id];if(on){if(!m){m=BX[id]=new THREE.Group();[[new THREE.BoxGeometry(1,1.4,1),.7,.4],[new THREE.CylinderGeometry(.06,.06,16,8),8,.6]].forEach(([g,h,o])=>{const q=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xff3030,transparent:true,opacity:o,depthTest:false}));q.position.y=h;q.renderOrder=999;m.add(q)});sc.add(m)}m.position.set(r.s[0],r.s[1],r.s[2]);m.visible=true}else if(m)m.visible=false}
-if(dr){const ix=jx+(K.KeyD?1:0)-(K.KeyA?1:0),fw=-jy+(K.KeyW?1:0)-(K.KeyS?1:0),cp=Math.cos(dr.pit),sn=Math.sin(dr.pit),s=Math.sin(dr.yaw),c=Math.cos(dr.yaw),v=7*dt;
+if(dr&&dr.fl){const o=RM[dr.fl]&&RM[dr.fl].s;if(!o||!P[dr.fl]||P[dr.fl].role!='oni'){dr.fl=null;foUp()}else{const cp=Math.cos(dr.pit),sn=Math.sin(dr.pit),s=Math.sin(dr.yaw),c=Math.cos(dr.yaw),D=4.5,k=1-Math.exp(-10*dt);
+  const tx=Math.max(WB.x0,Math.min(WB.x1,o[0]+s*cp*D)),ty=Math.max(.3,Math.min(MI?CHT()-.25:30,o[1]+1.2-sn*D)),tz=Math.max(WB.z0,Math.min(WB.z1,o[2]+c*cp*D));dr.x+=(tx-dr.x)*k;dr.y+=(ty-dr.y)*k;dr.z+=(tz-dr.z)*k}}
+else if(dr){const ix=jx+(K.KeyD?1:0)-(K.KeyA?1:0),fw=-jy+(K.KeyW?1:0)-(K.KeyS?1:0),cp=Math.cos(dr.pit),sn=Math.sin(dr.pit),s=Math.sin(dr.yaw),c=Math.cos(dr.yaw),v=7*dt;
   dr.x+=(-s*cp*fw+c*ix)*v;dr.y+=(sn*fw+(up?1:0)-(dn?1:0))*v;dr.z+=(-c*cp*fw-s*ix)*v;
   dr.x=Math.max(WB.x0,Math.min(WB.x1,dr.x));dr.z=Math.max(WB.z0,Math.min(WB.z1,dr.z));dr.y=Math.max(.3,Math.min(MI?CHT()-.25:30,dr.y))}
 gun.visible=ph=='seek'&&role()=='oni';
